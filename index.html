@@ -641,6 +641,201 @@ td {
 
 
 
+
+/* GLOBAL SEARCH BAR */
+.global-search-bar {
+  background: rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+  padding: 10px 32px;
+}
+.global-search-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.global-search-wrap {
+  position: relative;
+  flex: 1;
+  max-width: 480px;
+}
+.global-search-input {
+  width: 100%;
+  background: rgba(255,255,255,0.10);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 9px 16px 9px 38px;
+  font-size: 13.5px;
+  font-family: 'DM Sans', sans-serif;
+  color: white;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.global-search-input::placeholder { color: rgba(255,255,255,0.4); }
+.global-search-input:focus {
+  border-color: var(--gold);
+  background: rgba(255,255,255,0.14);
+}
+.global-search-icon {
+  position: absolute; left: 12px; top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.4); font-size: 14px; pointer-events: none;
+}
+.global-search-clear {
+  position: absolute; right: 10px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none; color: rgba(255,255,255,0.4);
+  cursor: pointer; font-size: 14px; padding: 2px 4px;
+  display: none;
+}
+.global-search-clear.visible { display: block; }
+.global-search-results-count {
+  font-size: 12px; color: rgba(255,255,255,0.5);
+  white-space: nowrap; letter-spacing: 0.3px;
+}
+.global-state-select {
+  background: rgba(255,255,255,0.10);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  color: white;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.global-state-select option { background: var(--ink); color: white; }
+.global-state-select:focus { border-color: var(--gold); }
+
+/* GLOBAL SEARCH DROPDOWN RESULTS */
+.gsearch-dropdown {
+  position: absolute;
+  top: calc(100% + 6px); left: 0; right: 0;
+  background: white;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  max-height: 380px;
+  overflow-y: auto;
+  z-index: 500;
+  display: none;
+}
+.gsearch-dropdown.open { display: block; }
+.gsearch-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f5f0e8;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  transition: background 0.12s;
+}
+.gsearch-item:last-child { border-bottom: none; }
+.gsearch-item:hover { background: var(--gold-pale); }
+.gsearch-avatar {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--ink); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700; font-size: 14px; color: rgba(255,255,255,0.6);
+  overflow: hidden;
+}
+.gsearch-avatar img { width:100%; height:100%; object-fit:cover; border-radius:7px; }
+.gsearch-item-name { font-weight: 600; font-size: 13.5px; color: var(--ink); }
+.gsearch-item-sub  { font-size: 11.5px; color: #888; margin-top: 1px; line-height: 1.3; }
+.gsearch-item-pill {
+  margin-left: auto; flex-shrink: 0;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 4px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.gsearch-no-results {
+  padding: 20px; text-align: center; color: #bbb; font-size: 13px;
+}
+.gsearch-highlight { background: rgba(201,168,76,0.3); border-radius: 2px; padding: 0 1px; }
+
+/* STATE-WISE TAB */
+.state-tab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.state-section-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.state-card-header {
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.state-card-header.ASSAM { background: linear-gradient(135deg, #1a3a5c, #2a5080); color: white; }
+.state-card-header.ARUNACHAL { background: linear-gradient(135deg, #1a4a1a, #2d7a2d); color: white; }
+.state-card-header.TRIPURA { background: linear-gradient(135deg, #5c1a4a, #8a2a70); color: white; }
+.state-card-header.OTHER { background: linear-gradient(135deg, #3a3a5c, #5a5a8a); color: white; }
+.state-flag { font-size: 28px; }
+.state-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; font-weight: 700;
+}
+.state-card-count {
+  font-size: 11px; opacity: 0.7; letter-spacing: 0.5px; margin-top: 1px;
+}
+.state-card-body { padding: 8px 0; max-height: 400px; overflow-y: auto; }
+.state-list-item {
+  padding: 10px 20px;
+  border-bottom: 1px solid #f5f0e8;
+  cursor: pointer;
+  display: flex; gap: 10px; align-items: center;
+  transition: background 0.12s;
+}
+.state-list-item:last-child { border-bottom: none; }
+.state-list-item:hover { background: var(--gold-pale); }
+.state-list-num {
+  font-size: 11px; color: #ccc; font-weight: 700;
+  min-width: 22px; text-align: right; flex-shrink: 0;
+}
+.state-list-name { font-weight: 600; font-size: 13px; color: var(--ink); }
+.state-list-post { font-size: 11px; color: #888; margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+.state-bday-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--orange); flex-shrink: 0; margin-left: auto;
+  display: none;
+}
+.state-bday-dot.visible { display: block; }
+.state-card-footer {
+  padding: 10px 20px;
+  border-top: 1px solid var(--border);
+  background: #fafafa;
+  font-size: 12px; color: #888;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.state-search-wrap {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.state-search-input {
+  width: 100%; padding: 7px 12px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  font-size: 12px; font-family: 'DM Sans', sans-serif;
+  outline: none; transition: border-color 0.2s;
+  color: var(--ink);
+}
+.state-search-input:focus { border-color: var(--gold); }
+
+@media (max-width: 768px) {
+  .global-search-bar { padding: 10px 16px; }
+  .global-search-wrap { max-width: 100%; }
+  .state-tab-grid { grid-template-columns: 1fr; }
+}
+
 /* ===== PROFILE CARD MODAL ===== */
 .profile-overlay {
   position: fixed; inset: 0;
@@ -1089,12 +1284,36 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
   </div>
 </header>
 
+
+<div class="global-search-bar" id="globalSearchBar">
+  <div class="global-search-inner">
+    <div class="global-search-wrap" id="gsWrap">
+      <span class="global-search-icon">🔍</span>
+      <input class="global-search-input" id="globalSearch"
+        placeholder="Search any official by name, post, state..."
+        oninput="handleGlobalSearch(this.value)"
+        onfocus="showGsDropdown()"
+        autocomplete="off">
+      <button class="global-search-clear" id="gsClear" onclick="clearGlobalSearch()">✕</button>
+      <div class="gsearch-dropdown" id="gsDropdown"></div>
+    </div>
+    <select class="global-state-select" id="globalStateFilter" onchange="handleGlobalStateFilter()">
+      <option value="">🗺 All States</option>
+      <option value="ASSAM">🔵 Assam (125)</option>
+      <option value="ARUNACHAL PRADESH">🟢 Arunachal Pradesh (36)</option>
+      <option value="TRIPURA">🟣 Tripura (61)</option>
+    </select>
+    <div class="global-search-results-count" id="gsCount"></div>
+  </div>
+</div>
+
 <nav class="nav-tabs">
   <div class="nav-inner">
     <div class="nav-tab active" onclick="showTab('dashboard')" id="tab-dashboard">📊 Dashboard</div>
     <div class="nav-tab" onclick="showTab('database')" id="tab-database">📋 All Officials</div>
     <div class="nav-tab" onclick="showTab('calendar')" id="tab-calendar">📅 Birthday Calendar</div>
     <div class="nav-tab" onclick="showTab('gifts')" id="tab-gifts">🎁 Gift Tracker</div>
+    <div class="nav-tab" onclick="showTab('statewise')" id="tab-statewise">🗺 State-wise List</div>
     <div class="nav-tab" onclick="showTab('import')" id="tab-import">⬆️ Import / Export</div>
   </div>
 </nav>
@@ -1178,6 +1397,11 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
   <!-- GIFTS TAB -->
   <div id="tab-content-gifts" class="hidden">
     <div id="giftsContent"></div>
+  </div>
+
+  <!-- STATE-WISE TAB -->
+  <div id="tab-content-statewise" class="hidden">
+    <div id="statewiseContent"></div>
   </div>
 
   <!-- IMPORT TAB -->
@@ -1862,7 +2086,7 @@ function openWa(idx) {
   const nextAge = age ? age + 1 : '';
   
   const first = o.name.replace(/^(Shri|Shri\.|Dr\.|Dr|Smt|Smti|Smti\.|Mrs\.|Mr\.|Ms\.|Sri)\s+/i, '').split(',')[0];
-  const msg = `🎂 *Warm Birthday Greetings!*\n\nDear ${o.name},\n\nOn behalf of State Bank of India, LHO Guwahati, I extend our warmest birthday wishes to you on this special occasion.${nextAge ? ` May this ${nextAge}th birthday bring you joy, good health and continued success.` : ''}\n\nYour dedicated service to the nation is truly inspiring. We look forward to continued cooperation and goodwill.\n\nWith regards,\n*Biswajit Bhattacharjee*\nChief Manager (Liaison)\nSBI LHO, Guwahati`;
+  const msg = `🎂 *Warm Birthday Greetings!*\n\nDear ${o.name},\n\nOn behalf of State Bank of India, LHO Guwahati, I extend our warmest birthday wishes to you on this special occasion.${nextAge ? ` May this ${nextAge}th birthday bring you joy, good health and continued success.` : ''}\n\nYour dedicated service to the nation is truly inspiring. We look forward to continued cooperation and goodwill.\n\nWith regards,\n*Atul Rathi*\nCGM, SBI, LHO, Guwahati`;
   
   const waUrl = `https://wa.me/91${o.mobile}?text=${encodeURIComponent(msg.replace(/\n/g,'\n'))}`;
   
@@ -1877,9 +2101,8 @@ On behalf of State Bank of India, LHO Guwahati, I extend our warmest birthday wi
 Your dedicated service to the nation is truly inspiring. We look forward to continued cooperation and goodwill.
 
 With regards,
-<strong>Biswajit Bhattacharjee</strong>
-Chief Manager (Liaison)
-SBI LHO, Guwahati</div>
+<strong>Atul Rathi</strong>
+CGM, SBI, LHO, Guwahati</div>
     <p style="font-size:12px;color:#aaa">📱 Mobile: +91 ${o.mobile}</p>
   `;
   document.getElementById('waOpenBtn').onclick = () => { window.open(waUrl, '_blank'); closeWaModal(); };
@@ -2025,13 +2248,14 @@ function handleXlsxImport(event) {
 // ========== TAB NAVIGATION ==========
 function showTab(tab) {
   currentTab = tab;
-  ['dashboard','database','calendar','gifts','import'].forEach(t => {
+  ['dashboard','database','calendar','gifts','statewise','import'].forEach(t => {
     document.getElementById('tab-content-' + t).classList.toggle('hidden', t !== tab);
     document.getElementById('tab-' + t).classList.toggle('active', t === tab);
   });
   if (tab === 'database') applyFilters();
   if (tab === 'calendar') renderCalendar();
   if (tab === 'gifts') renderGifts();
+  if (tab === 'statewise') renderStatewise();
 }
 
 // ========== TOAST ==========
@@ -2248,6 +2472,187 @@ async function fetchWiki() {
   btn.disabled = false;
 }
 
+
+// ========== GLOBAL SEARCH ==========
+let gsTimeout = null;
+
+function handleGlobalSearch(val) {
+  document.getElementById('gsClear').classList.toggle('visible', val.length > 0);
+  clearTimeout(gsTimeout);
+  gsTimeout = setTimeout(() => renderGsDropdown(val), 150);
+}
+
+function renderGsDropdown(val) {
+  const dd = document.getElementById('gsDropdown');
+  const stateF = document.getElementById('globalStateFilter').value;
+  if (!val.trim()) { dd.classList.remove('open'); document.getElementById('gsCount').textContent = ''; return; }
+
+  const q = val.toLowerCase();
+  const results = officials
+    .map((o, idx) => ({ ...o, idx }))
+    .filter(o => {
+      if (stateF && o.state !== stateF) return false;
+      return o.name.toLowerCase().includes(q) ||
+             (o.post || '').toLowerCase().includes(q) ||
+             (o.state || '').toLowerCase().includes(q) ||
+             (o.domicile || '').toLowerCase().includes(q);
+    })
+    .slice(0, 12);
+
+  document.getElementById('gsCount').textContent = results.length > 0 ? `${results.length} result${results.length > 1 ? 's' : ''}` : '';
+
+  if (results.length === 0) {
+    dd.innerHTML = '<div class="gsearch-no-results">No officials found matching "<strong>' + escHtml(val) + '</strong>"</div>';
+  } else {
+    dd.innerHTML = results.map(o => {
+      const initials = o.name.replace(/^(Shri|Dr\.|Dr|Smt|Smti|Smti\.|Mrs\.|Mr\.|Ms\.|Sri)\.?\s+/i,'')
+                             .split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+      const avatar = o.photo
+        ? `<img src="${o.photo}" alt="">`
+        : `<span style="font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.6)">${initials}</span>`;
+      const days = daysToNextBirthday(o.dob);
+      const bdayHint = (days !== null && days <= 30) ? ` 🎂` : '';
+      const stateColor = o.state === 'ASSAM' ? 'background:#e8f0fa;color:#1a3a5c' :
+                         o.state === 'ARUNACHAL PRADESH' ? 'background:#eaf5e9;color:#1a4a1a' :
+                         o.state === 'TRIPURA' ? 'background:#f9eaf5;color:#5c1a4a' : 'background:#f0f0fa;color:#333';
+      const hi = s => escHtml(s).replace(new RegExp('(' + escHtml(val).replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi'),
+                        '<span class="gsearch-highlight">$1</span>');
+      return `<div class="gsearch-item" onclick="gsSelectOfficial(${o.idx})">
+        <div class="gsearch-avatar">${avatar}</div>
+        <div style="flex:1;min-width:0">
+          <div class="gsearch-item-name">${hi(o.name)}${bdayHint}</div>
+          <div class="gsearch-item-sub">${escHtml((o.post||'').slice(0,70))}${(o.post||'').length>70?'…':''}</div>
+        </div>
+        <span class="gsearch-item-pill" style="${stateColor}">${o.state === 'ARUNACHAL PRADESH' ? 'ARUNACHAL' : (o.state||'—')}</span>
+      </div>`;
+    }).join('');
+  }
+  dd.classList.add('open');
+}
+
+function gsSelectOfficial(idx) {
+  document.getElementById('gsDropdown').classList.remove('open');
+  document.getElementById('globalSearch').value = '';
+  document.getElementById('gsClear').classList.remove('visible');
+  document.getElementById('gsCount').textContent = '';
+  openProfile(idx);
+}
+
+function showGsDropdown() {
+  const val = document.getElementById('globalSearch').value;
+  if (val.trim()) renderGsDropdown(val);
+}
+
+function clearGlobalSearch() {
+  document.getElementById('globalSearch').value = '';
+  document.getElementById('gsClear').classList.remove('visible');
+  document.getElementById('gsDropdown').classList.remove('open');
+  document.getElementById('gsCount').textContent = '';
+}
+
+function handleGlobalStateFilter() {
+  const state = document.getElementById('globalStateFilter').value;
+  // Sync with database tab state filter
+  const dbFilter = document.getElementById('stateFilter');
+  if (dbFilter) dbFilter.value = state;
+  applyFilters();
+  // If statewise tab active, re-render
+  if (currentTab === 'statewise') renderStatewise();
+  // If on dashboard or other tabs, just filter
+  if (val) renderGsDropdown(document.getElementById('globalSearch').value);
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', e => {
+  if (!document.getElementById('gsWrap')?.contains(e.target)) {
+    document.getElementById('gsDropdown')?.classList.remove('open');
+  }
+});
+
+// ========== STATE-WISE LIST ==========
+function renderStatewise() {
+  const stateGroups = {};
+  officials.forEach((o, idx) => {
+    const s = o.state || 'OTHER';
+    if (!stateGroups[s]) stateGroups[s] = [];
+    stateGroups[s].push({ ...o, idx });
+  });
+
+  const stateOrder = ['ASSAM', 'ARUNACHAL PRADESH', 'TRIPURA', 'MEGHALAYA', 'NAGALAND', 'MANIPUR', 'MIZORAM', 'SIKKIM', 'OTHER'];
+  const stateFlags = { ASSAM: '🔵', 'ARUNACHAL PRADESH': '🟢', TRIPURA: '🟣', MEGHALAYA: '🟡', NAGALAND: '🟠', MANIPUR: '🔴', MIZORAM: '⚪', SIKKIM: '🟤', OTHER: '⚫' };
+  const stateBgClass = { ASSAM: 'ASSAM', 'ARUNACHAL PRADESH': 'ARUNACHAL', TRIPURA: 'TRIPURA' };
+
+  const content = document.getElementById('statewiseContent');
+  if (!content) return;
+
+  const totalStates = Object.keys(stateGroups).length;
+  const totalOfficials = officials.length;
+
+  content.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div class="section-title" style="margin-bottom:4px">🗺 State-wise Officials List <span class="badge">${totalStates} STATES</span></div>
+        <div style="font-size:13px;color:#888">${totalOfficials} officials across ${totalStates} states/UTs • Click any name to view profile</div>
+      </div>
+    </div>
+    <div class="state-tab-grid">
+      ${stateOrder
+        .filter(s => stateGroups[s])
+        .map(state => {
+          const list = stateGroups[state].sort((a,b) => a.name.localeCompare(b.name));
+          const withDob = list.filter(o => o.dob).length;
+          const withMob = list.filter(o => o.mobile).length;
+          const upcoming = list.filter(o => { const d = daysToNextBirthday(o.dob); return d !== null && d <= 30; }).length;
+          const bgClass = stateBgClass[state] || 'OTHER';
+          return `
+          <div class="state-section-card">
+            <div class="state-card-header ${bgClass}">
+              <span class="state-flag">${stateFlags[state] || '📍'}</span>
+              <div>
+                <div class="state-card-title">${state}</div>
+                <div class="state-card-count">${list.length} officials • ${withDob} with DOB • ${withMob} with mobile</div>
+              </div>
+            </div>
+            <div class="state-search-wrap">
+              <input class="state-search-input" placeholder="Search in ${state}..."
+                oninput="filterStateList('list-${state.replace(/ /g,'-')}', this.value)"
+                id="si-${state.replace(/ /g,'-')}">
+            </div>
+            <div class="state-card-body" id="list-${state.replace(/ /g,'-')}">
+              ${list.map((o, i) => {
+                const days = daysToNextBirthday(o.dob);
+                const isBday = days !== null && days <= 30;
+                return `<div class="state-list-item" onclick="openProfile(${o.idx})">
+                  <span class="state-list-num">${i+1}</span>
+                  <div style="flex:1;min-width:0">
+                    <div class="state-list-name">${escHtml(o.name)}</div>
+                    <div class="state-list-post">${escHtml((o.post||'').slice(0,60))}${(o.post||'').length>60?'…':''}</div>
+                  </div>
+                  <div class="state-bday-dot ${isBday ? 'visible' : ''}" title="${days===0?'Birthday today!':days+' days to birthday'}"></div>
+                </div>`;
+              }).join('')}
+            </div>
+            <div class="state-card-footer">
+              <span>${upcoming > 0 ? `🎂 ${upcoming} upcoming birthday${upcoming>1?'s':''}` : 'No upcoming birthdays'}</span>
+              <span style="color:var(--gold);font-weight:600">${list.filter(o=>o.giftSent).length} mementos sent</span>
+            </div>
+          </div>`;
+        }).join('')}
+    </div>
+  `;
+}
+
+function filterStateList(listId, query) {
+  const el = document.getElementById(listId);
+  if (!el) return;
+  const items = el.querySelectorAll('.state-list-item');
+  const q = query.toLowerCase();
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = (!q || text.includes(q)) ? '' : 'none';
+  });
+}
+
 // ========== QUICK-EDIT PANEL ==========
 function openQePanel(idx) {
   const o = officials[idx];
@@ -2337,6 +2742,11 @@ function deleteFromQe() {
 }
 
 // ========== START ==========
+// Sync global state filter from DB tab filter
+document.getElementById('globalStateFilter')?.addEventListener('change', function() {
+  const dbF = document.getElementById('stateFilter');
+  if (dbF) { dbF.value = this.value; applyFilters(); }
+});
 init();
 </script>
 
