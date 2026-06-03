@@ -3040,9 +3040,15 @@ async function loadFromFirebase() {
   if (!fbInitialized) return;
   try {
     setSyncStatus('loading', 'Loading...');
-    const res = await fetch(FB_DOC_URL + '?key=' + FB_API_KEY);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    let res;
+    try {
+      res = await fetch(FB_DOC_URL + '?key=' + FB_API_KEY, { signal: controller.signal });
+    } finally {
+      clearTimeout(timer);
+    }
     if (res.status === 404) {
-      // First time — push embedded data
       setSyncStatus('syncing', 'Setting up cloud...');
       await pushToFirebase();
       return;
@@ -3068,9 +3074,13 @@ async function loadFromFirebase() {
       await pushToFirebase();
     }
   } catch(e) {
-    console.error('Firebase load error:', e);
-    setSyncStatus('offline', 'Using local data');
-    showCloudStatus('⚠️ Using local data — cloud unavailable', 4000);
+    if (e.name === 'AbortError') {
+      setSyncStatus('offline', 'Local mode');
+      showCloudStatus('⚠️ Cloud timeout — using local data', 4000);
+    } else {
+      setSyncStatus('offline', 'Local mode');
+    }
+    console.warn('Load:', e.message);
   }
 }
 
