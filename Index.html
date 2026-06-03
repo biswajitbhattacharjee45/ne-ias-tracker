@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NE IAS Officials — Birthday & Memento Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a2e;
+  --ink2: #2d2d4e;
+  --gold: #c9a84c;
+  --gold-light: #e8c97e;
+  --gold-pale: #fdf6e7;
+  --cream: #faf8f4;
+  --white: #ffffff;
+  --border: #e8e0d0;
+  --red: #c0392b;
+  --green: #27ae60;
+  --blue: #2980b9;
+  --orange: #e67e22;
+  --assam: #1a3a5c;
+  --arunachal: #2d5a1b;
+  --tripura: #5c1a3a;
+  --shadow: 0 4px 24px rgba(26,26,46,0.10);
+  --shadow-lg: 0 8px 40px rgba(26,26,46,0.16);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* HEADER */
+.app-header {
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink2) 100%);
+  color: white;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-lg);
+}
+.header-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.header-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.header-logo span { color: var(--gold); }
+.header-subtitle {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  font-weight: 500;
+}
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.today-badge {
+  background: rgba(201,168,76,0.18);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--gold-light);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* NAV TABS */
+.nav-tabs {
+  background: var(--ink2);
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+.nav-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  gap: 0;
+}
+.nav-tab {
+  padding: 14px 24px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.nav-tab:hover { color: rgba(255,255,255,0.85); }
+.nav-tab.active {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold);
+  font-weight: 600;
+}
+
+/* MAIN */
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+/* STAT CARDS */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.stat-card.gold::before { background: var(--gold); }
+.stat-card.green::before { background: var(--green); }
+.stat-card.blue::before { background: var(--blue); }
+.stat-card.orange::before { background: var(--orange); }
+.stat-card.red::before { background: var(--red); }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink);
+}
+.stat-label {
+  font-size: 12px;
+  color: #888;
+  margin-top: 6px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.stat-sub {
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 2px;
+}
+
+/* BIRTHDAY ALERT BANNER */
+.birthday-banner {
+  background: linear-gradient(135deg, #fff9ed, #fff4d9);
+  border: 1px solid var(--gold);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  display: none;
+}
+.birthday-banner.visible { display: block; }
+.birthday-banner-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.birthday-banner-title .cake { font-size: 22px; }
+.bday-list { display: flex; flex-wrap: wrap; gap: 10px; }
+.bday-chip {
+  background: white;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(201,168,76,0.15);
+}
+.bday-chip-name { font-weight: 600; color: var(--ink); }
+.bday-chip-post { color: #777; font-size: 11px; }
+.whatsapp-btn {
+  background: #25D366;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.2s;
+}
+.whatsapp-btn:hover { background: #1ebe57; }
+
+/* UPCOMING SECTION */
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title .badge {
+  background: var(--gold-pale);
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+
+/* UPCOMING CARDS */
+.upcoming-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.upcoming-card {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.upcoming-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.days-circle {
+  min-width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.days-circle .num { font-size: 20px; line-height: 1; }
+.days-circle .lbl { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; font-family: 'DM Sans', sans-serif; font-weight: 600; }
+.days-circle.urgent { background: #fff0f0; color: var(--red); border: 2px solid #ffcccc; }
+.days-circle.soon { background: #fff8ed; color: var(--orange); border: 2px solid #ffe0b2; }
+.days-circle.upcoming { background: #f0f8ff; color: var(--blue); border: 2px solid #b3d9ff; }
+.uc-name { font-weight: 600; font-size: 14px; color: var(--ink); margin-bottom: 3px; line-height: 1.3; }
+.uc-post { font-size: 11px; color: #888; line-height: 1.4; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.uc-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.state-pill {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.pill-ASSAM { background: #e8f0fa; color: var(--assam); }
+.pill-ARUNACHAL { background: #eaf5e9; color: var(--arunachal); }
+.pill-TRIPURA { background: #f9eaf5; color: var(--tripura); }
+.uc-dob { font-size: 11px; color: #aaa; }
+
+/* CONTROLS BAR */
+.controls-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.search-box {
+  flex: 1;
+  min-width: 220px;
+  position: relative;
+}
+.search-box input {
+  width: 100%;
+  padding: 11px 16px 11px 40px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  background: white;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-box input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+.search-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #bbb;
+  font-size: 15px;
+}
+select {
+  padding: 11px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  background: white;
+  color: var(--ink);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+select:focus { border-color: var(--gold); }
+.count-label {
+  font-size: 13px;
+  color: #888;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+/* DATA TABLE */
+.table-wrap {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+thead th {
+  background: var(--ink);
+  color: rgba(255,255,255,0.8);
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+thead th:hover { background: var(--ink2); }
+thead th .sort-arrow { margin-left: 4px; opacity: 0.5; }
+thead th.sorted .sort-arrow { opacity: 1; color: var(--gold); }
+tbody tr {
+  border-bottom: 1px solid #f0ece4;
+  transition: background 0.15s;
+}
+tbody tr:hover { background: #faf8f0; }
+tbody tr:last-child { border-bottom: none; }
+td {
+  padding: 13px 16px;
+  vertical-align: middle;
+  color: var(--ink);
+}
+.td-name { font-weight: 600; font-size: 13.5px; }
+.td-post { color: #666; font-size: 11.5px; max-width: 280px; line-height: 1.4; }
+.td-mobile a {
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 12.5px;
+}
+.td-dob { font-size: 12px; color: #555; white-space: nowrap; }
+.td-age { font-size: 12px; color: #888; }
+.td-days { white-space: nowrap; }
+.days-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.days-tag.today { background: #fff0f0; color: var(--red); }
+.days-tag.urgent { background: #fff4e8; color: var(--orange); }
+.days-tag.soon { background: #e8f4ff; color: var(--blue); }
+.days-tag.far { background: #f5f5f5; color: #999; }
+.days-tag.no-dob { background: #f5f5f5; color: #bbb; font-weight: 400; }
+.gift-cell { text-align: center; }
+.gift-toggle {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: white;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.gift-toggle.sent { border-color: var(--green); background: #e8faf0; }
+.whatsapp-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+  opacity: 0.7;
+}
+.whatsapp-icon-btn:hover { background: #e8fdf3; opacity: 1; }
+.whatsapp-icon-btn.no-phone { opacity: 0.2; cursor: default; }
+.action-cell { display: flex; gap: 6px; align-items: center; }
+
+/* ADD / EDIT MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,26,46,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(3px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: white;
+  border-radius: 20px;
+  padding: 36px;
+  width: 100%;
+  max-width: 560px;
+  box-shadow: var(--shadow-lg);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.modal-subtitle { font-size: 13px; color: #888; margin-bottom: 28px; }
+.form-row { margin-bottom: 18px; }
+.form-row label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink2);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 7px;
+}
+.form-row input, .form-row select, .form-row textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  background: white;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+}
+.form-row textarea { resize: vertical; min-height: 80px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.modal-actions { display: flex; gap: 12px; margin-top: 28px; }
+.btn {
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-primary {
+  background: var(--ink);
+  color: white;
+  flex: 1;
+}
+.btn-primary:hover { background: var(--ink2); transform: translateY(-1px); }
+.btn-gold {
+  background: var(--gold);
+  color: var(--ink);
+  flex: 1;
+}
+.btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); }
+.btn-outline {
+  background: white;
+  color: var(--ink);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--ink); }
+.btn-danger {
+  background: #fdf0ef;
+  color: var(--red);
+  border: 1.5px solid #f5c6c3;
+}
+.btn-danger:hover { background: var(--red); color: white; }
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 12px;
+  border-radius: 8px;
+}
+
+/* GIFT NOTES POPUP */
+.gift-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,26,46,0.5);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 900;
+}
+.gift-modal-overlay.open { display: flex; }
+.gift-modal {
+  background: white;
+  border-radius: 20px 20px 0 0;
+  padding: 28px 28px 36px;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* WHATSAPP TEMPLATE */
+.wa-template {
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-wrap;
+  font-family: 'DM Sans', sans-serif;
+  border-left: 3px solid #25D366;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #aaa;
+}
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; }
+
+/* MONTH VIEW */
+.month-section { margin-bottom: 32px; }
+.month-header {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  padding: 10px 0;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.month-header .cnt {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 500;
+}
+
+/* PAGINATION */
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.page-btn {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+.page-btn:hover { border-color: var(--gold); color: var(--gold); }
+.page-btn.active { background: var(--ink); color: white; border-color: var(--ink); }
+.page-btn:disabled { opacity: 0.35; cursor: default; }
+
+
+/* INLINE EDITING */
+.editable-cell {
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  transition: background 0.15s;
+  position: relative;
+}
+.editable-cell:hover { background: #fff8e8; outline: 1px dashed var(--gold); }
+.editable-cell:hover::after {
+  content: '✏️';
+  position: absolute;
+  right: -18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  opacity: 0.6;
+}
+.inline-input {
+  border: 1.5px solid var(--gold) !important;
+  border-radius: 6px !important;
+  padding: 4px 8px !important;
+  font-size: 13px !important;
+  font-family: 'DM Sans', sans-serif !important;
+  background: #fffdf5 !important;
+  color: var(--ink) !important;
+  outline: none !important;
+  width: 100% !important;
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15) !important;
+}
+.inline-save { 
+  background: var(--green); color: white; border: none; border-radius: 5px;
+  padding: 3px 10px; font-size: 11px; font-weight: 600; cursor: pointer;
+  margin-left: 4px; font-family: 'DM Sans', sans-serif;
+}
+.inline-cancel {
+  background: #eee; color: #666; border: none; border-radius: 5px;
+  padding: 3px 8px; font-size: 11px; cursor: pointer; margin-left: 3px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* QUICK-EDIT SIDE PANEL */
+.qe-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,26,46,0.45);
+  display: none;
+  z-index: 800;
+  backdrop-filter: blur(2px);
+}
+.qe-overlay.open { display: block; }
+.qe-panel {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 420px;
+  max-width: 96vw;
+  background: white;
+  box-shadow: -8px 0 40px rgba(26,26,46,0.18);
+  z-index: 801;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.34,1.1,0.64,1);
+}
+.qe-panel.open { transform: translateX(0); }
+.qe-header {
+  background: var(--ink);
+  color: white;
+  padding: 20px 24px 16px;
+  flex-shrink: 0;
+}
+.qe-header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.qe-header-sub { font-size: 11px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
+.qe-close {
+  position: absolute;
+  top: 16px; right: 20px;
+  background: rgba(255,255,255,0.1);
+  border: none; color: white;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.qe-close:hover { background: rgba(255,255,255,0.2); }
+.qe-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+.qe-field { margin-bottom: 16px; }
+.qe-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #aaa;
+  margin-bottom: 5px;
+}
+.qe-input {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: white;
+}
+.qe-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
+.qe-textarea {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+}
+.qe-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  background: #fafafa;
+}
+.qe-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid var(--gold-pale);
+  padding-bottom: 6px;
+  margin: 20px 0 14px;
+}
+.qe-section-label:first-child { margin-top: 0; }
+.flag-missing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fff4e8;
+  color: var(--orange);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: 6px;
+  letter-spacing: 0.3px;
+}
+
+/* Edit row highlight */
+tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold); }
+
+/* Action buttons improvements */
+.btn-edit-full { 
+  background: var(--ink); color: white; border: none; border-radius: 7px;
+  padding: 5px 10px; font-size: 11px; font-weight: 600; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: background 0.15s;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.btn-edit-full:hover { background: var(--ink2); }
+.btn-quick-edit {
+  background: var(--gold-pale); color: #8a6a10; border: 1px solid var(--gold);
+  border-radius: 7px; padding: 5px 10px; font-size: 11px; font-weight: 600;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.btn-quick-edit:hover { background: var(--gold); color: white; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--ink);
+  color: white;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  z-index: 9999;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: var(--green); }
+.toast.error { background: var(--red); }
+
+/* Upload area */
+.upload-area {
+  border: 2px dashed var(--border);
+  border-radius: 14px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 20px;
+}
+.upload-area:hover { border-color: var(--gold); background: var(--gold-pale); }
+.upload-icon { font-size: 40px; margin-bottom: 12px; }
+.upload-text { font-size: 15px; color: #666; }
+.upload-text strong { color: var(--ink); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-inner { padding: 14px 16px; flex-wrap: wrap; }
+  .main { padding: 16px; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .form-grid { grid-template-columns: 1fr; }
+  .controls-bar { flex-direction: column; }
+  .search-box { min-width: 100%; }
+  table { font-size: 12px; }
+  td, th { padding: 10px 12px; }
+  .nav-inner { padding: 0 16px; overflow-x: auto; }
+}
+
+.hidden { display: none !important; }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.ml-auto { margin-left: auto; }
+
+/* Import section */
+.import-section {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 32px;
+  margin-bottom: 32px;
+}
+.import-section h2 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.import-section p { font-size: 13px; color: #888; margin-bottom: 24px; }
+.column-map { font-size: 12px; color: #666; margin-top: 14px; }
+.column-map code {
+  background: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-logo">NE IAS Officials <span>Tracker</span></div>
+      <div class="header-subtitle">Birthday &amp; Memento Management • Northeast India</div>
+    </div>
+    <div class="header-right">
+      <div class="today-badge" id="todayBadge">Loading...</div>
+      <button class="btn btn-gold btn-sm" onclick="openAddModal()">+ Add Official</button>
+    </div>
+  </div>
+</header>
+
+<nav class="nav-tabs">
+  <div class="nav-inner">
+    <div class="nav-tab active" onclick="showTab('dashboard')" id="tab-dashboard">📊 Dashboard</div>
+    <div class="nav-tab" onclick="showTab('database')" id="tab-database">📋 All Officials</div>
+    <div class="nav-tab" onclick="showTab('calendar')" id="tab-calendar">📅 Birthday Calendar</div>
+    <div class="nav-tab" onclick="showTab('gifts')" id="tab-gifts">🎁 Gift Tracker</div>
+    <div class="nav-tab" onclick="showTab('import')" id="tab-import">⬆️ Import / Export</div>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- DASHBOARD TAB -->
+  <div id="tab-content-dashboard">
+    <div class="stat-grid" id="statGrid"></div>
+    <div class="birthday-banner" id="todayBanner"></div>
+    <div id="upcomingSection"></div>
+  </div>
+
+  <!-- DATABASE TAB -->
+  <div id="tab-content-database" class="hidden">
+    <div class="controls-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search by name, post, state..." oninput="applyFilters()">
+      </div>
+      <select id="stateFilter" onchange="applyFilters()">
+        <option value="">All States</option>
+        <option value="ASSAM">Assam (125)</option>
+        <option value="ARUNACHAL PRADESH">Arunachal Pradesh (36)</option>
+        <option value="TRIPURA">Tripura (61)</option>
+      </select>
+      <select id="dobFilter" onchange="applyFilters()">
+        <option value="">All Records</option>
+        <option value="has-dob">Has DOB</option>
+        <option value="no-dob">Missing DOB</option>
+        <option value="this-month">Birthday This Month</option>
+        <option value="next-30">Birthday Next 30 Days</option>
+      </select>
+      <select id="giftFilter" onchange="applyFilters()">
+        <option value="">All Gift Status</option>
+        <option value="sent">Gift Sent ✓</option>
+        <option value="pending">Gift Pending</option>
+      </select>
+      <select id="sortBy" onchange="applyFilters()">
+        <option value="name">Sort: Name A-Z</option>
+        <option value="days">Sort: Upcoming Birthday</option>
+        <option value="state">Sort: State</option>
+        <option value="dob-month">Sort: Birth Month</option>
+      </select>
+      <div class="count-label" id="countLabel"></div>
+    </div>
+    <div class="table-wrap">
+      <table id="mainTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name &amp; Designation</th>
+            <th>Post / Appointment</th>
+            <th>State</th>
+            <th>Date of Birth</th>
+            <th>Age / Days to Bday</th>
+            <th>Mobile</th>
+            <th>Gift</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- CALENDAR TAB -->
+  <div id="tab-content-calendar" class="hidden">
+    <div class="controls-bar">
+      <select id="calStateFilter" onchange="renderCalendar()">
+        <option value="">All States</option>
+        <option value="ASSAM">Assam</option>
+        <option value="ARUNACHAL PRADESH">Arunachal Pradesh</option>
+        <option value="TRIPURA">Tripura</option>
+      </select>
+    </div>
+    <div id="calendarContent"></div>
+  </div>
+
+  <!-- GIFTS TAB -->
+  <div id="tab-content-gifts" class="hidden">
+    <div id="giftsContent"></div>
+  </div>
+
+  <!-- IMPORT TAB -->
+  <div id="tab-content-import" class="hidden">
+    <div class="import-section">
+      <h2>📥 Import New Officials</h2>
+      <p>Upload an Excel file (.xlsx) to add more officials. Existing records will not be duplicated. Required columns: Name, Present Post, Mobile/Phone, DOB (Date of Birth), STATE.</p>
+      <div class="upload-area" onclick="document.getElementById('xlsxInput').click()">
+        <div class="upload-icon">📂</div>
+        <div class="upload-text"><strong>Click to select Excel file</strong><br>or drag and drop your .xlsx here</div>
+        <input type="file" id="xlsxInput" accept=".xlsx,.xls" style="display:none" onchange="handleXlsxImport(event)">
+      </div>
+      <div class="column-map">
+        <strong>Expected columns in your Excel:</strong><br>
+        Column A: <code>Name</code> &nbsp;|&nbsp; Column B: <code>Present Post</code> &nbsp;|&nbsp; Column C: <code>Mobile / Phone</code> &nbsp;|&nbsp; Column D: <code>DOB</code> &nbsp;|&nbsp; Column H: <code>STATE</code>
+      </div>
+      <div id="importResult" style="margin-top:20px"></div>
+    </div>
+    <div class="import-section">
+      <h2>📤 Export Data</h2>
+      <p>Download your complete officials database as a JSON backup file. You can use this to restore data if needed.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="exportJSON()">⬇️ Download JSON Backup</button>
+        <button class="btn btn-outline" onclick="exportCSV()">⬇️ Download CSV</button>
+      </div>
+    </div>
+    <div class="import-section">
+      <h2>🗑️ Reset Database</h2>
+      <p>This will clear all officials and restore the original dataset. Gift tracking notes will be lost.</p>
+      <button class="btn btn-danger" onclick="resetToOriginal()">⚠️ Reset to Original Data</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="officialModal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Add New Official</div>
+    <div class="modal-subtitle" id="modalSubtitle">Fill in the details below</div>
+    <input type="hidden" id="editIdx">
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Full Name *</label>
+        <input type="text" id="fName" placeholder="Shri / Dr. / Smt. etc.">
+      </div>
+      <div class="form-row">
+        <label>State *</label>
+        <select id="fState">
+          <option value="ASSAM">Assam</option>
+          <option value="ARUNACHAL PRADESH">Arunachal Pradesh</option>
+          <option value="TRIPURA">Tripura</option>
+          <option value="MEGHALAYA">Meghalaya</option>
+          <option value="NAGALAND">Nagaland</option>
+          <option value="MANIPUR">Manipur</option>
+          <option value="MIZORAM">Mizoram</option>
+          <option value="SIKKIM">Sikkim</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Present Post / Designation *</label>
+      <textarea id="fPost" placeholder="Secretary, Finance Department..." rows="3"></textarea>
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Mobile Number</label>
+        <input type="tel" id="fMobile" placeholder="10-digit mobile">
+      </div>
+      <div class="form-row">
+        <label>Date of Birth</label>
+        <input type="date" id="fDob">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Domicile State</label>
+        <input type="text" id="fDomicile" placeholder="Uttar Pradesh, Assam...">
+      </div>
+      <div class="form-row">
+        <label>Education</label>
+        <input type="text" id="fEducation" placeholder="B.Tech, MBBS, MA...">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Gift Note</label>
+      <input type="text" id="fGiftNote" placeholder="e.g. Silk tie sent via courier on 15 Jan">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger btn-sm hidden" id="deleteBtn" onclick="deleteOfficial()">Delete</button>
+      <button class="btn btn-gold" onclick="saveOfficial()">Save Official</button>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP MODAL -->
+<div class="modal-overlay" id="waModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">📱 Send WhatsApp Greeting</div>
+    <div id="waContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeWaModal()">Close</button>
+      <button class="btn btn-gold" id="waOpenBtn">Open WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- QUICK-EDIT SIDE PANEL -->
+<div class="qe-overlay" id="qeOverlay" onclick="closeQePanel()"></div>
+<div class="qe-panel" id="qePanel">
+  <div class="qe-header" style="position:relative">
+    <div class="qe-header-title" id="qePanelTitle">Edit Official</div>
+    <div class="qe-header-sub" id="qePanelSub">QUICK CORRECTION PANEL</div>
+    <button class="qe-close" onclick="closeQePanel()">✕</button>
+  </div>
+  <div class="qe-body">
+    <input type="hidden" id="qeIdx">
+
+    <div class="qe-section-label">Identity</div>
+    <div class="qe-field">
+      <div class="qe-label">Full Name</div>
+      <input class="qe-input" type="text" id="qeName" placeholder="Shri / Dr. / Smt. ...">
+    </div>
+    <div class="qe-field">
+      <div class="qe-label">State</div>
+      <select class="qe-input" id="qeState">
+        <option value="ASSAM">Assam</option>
+        <option value="ARUNACHAL PRADESH">Arunachal Pradesh</option>
+        <option value="TRIPURA">Tripura</option>
+        <option value="MEGHALAYA">Meghalaya</option>
+        <option value="NAGALAND">Nagaland</option>
+        <option value="MANIPUR">Manipur</option>
+        <option value="MIZORAM">Mizoram</option>
+        <option value="SIKKIM">Sikkim</option>
+      </select>
+    </div>
+
+    <div class="qe-section-label">Official Details</div>
+    <div class="qe-field">
+      <div class="qe-label">Present Post / Designation</div>
+      <textarea class="qe-input qe-textarea" id="qePost" placeholder="Secretary, Finance Department..."></textarea>
+    </div>
+    <div class="qe-field">
+      <div class="qe-label">Domicile State</div>
+      <input class="qe-input" type="text" id="qeDomicile" placeholder="Uttar Pradesh, Assam...">
+    </div>
+    <div class="qe-field">
+      <div class="qe-label">Educational Qualification</div>
+      <input class="qe-input" type="text" id="qeEducation" placeholder="B.Tech, MBBS, MA...">
+    </div>
+
+    <div class="qe-section-label">Contact & Birthday</div>
+    <div class="qe-field">
+      <div class="qe-label">Mobile Number <span id="qeMobileFlag"></span></div>
+      <input class="qe-input" type="tel" id="qeMobile" placeholder="10-digit mobile number">
+    </div>
+    <div class="qe-field">
+      <div class="qe-label">Date of Birth <span id="qeDobFlag"></span></div>
+      <input class="qe-input" type="date" id="qeDob">
+    </div>
+
+    <div class="qe-section-label">Gift Tracking</div>
+    <div class="qe-field">
+      <div class="qe-label">Gift Status</div>
+      <select class="qe-input" id="qeGiftSent">
+        <option value="false">⏳ Pending</option>
+        <option value="true">✅ Gift Sent</option>
+      </select>
+    </div>
+    <div class="qe-field">
+      <div class="qe-label">Gift Note / Remarks</div>
+      <input class="qe-input" type="text" id="qeGiftNote" placeholder="e.g. Assam silk sent via Blue Dart on 5 Jan">
+    </div>
+
+    <div style="height:8px"></div>
+  </div>
+  <div class="qe-footer">
+    <button class="btn btn-danger" style="flex:0 0 auto;padding:10px 14px;font-size:12px" onclick="deleteFromQe()">🗑 Delete</button>
+    <button class="btn btn-outline" style="flex:1" onclick="closeQePanel()">Cancel</button>
+    <button class="btn btn-gold" style="flex:1.5" onclick="saveFromQe()">💾 Save Changes</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== EMBEDDED DATA ==========
+const ORIGINAL_DATA = [{"name": "Shri Syedain Abbasi, IAS", "post": "Special Chief Secretary, Public Health Engineering and Water Resources Departments  and Department of Housing & Urban Affairs (addl)", "mobile": "8826822222", "dob": "1967-01-29", "domicile": "Uttar Pradesh", "education": "BA (Hist), MA (Mod Indian Hist)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Biswaranjan Samal, IAS", "post": "Additional Chief Secretary, Hill Areas, Food, Public Distribution & Consumer Affairs, Parliamentary Affairs Departments", "mobile": "9937484032", "dob": "1968-07-20", "domicile": "Odisha", "education": "B.Sc Engg (Mech), PGDIE (Ind. Engg)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Dr. Ravi Kota, IAS", "post": "Chief Secretary, Assam", "mobile": "7086008898", "dob": "1966-04-12", "domicile": "Andhra Pradesh", "education": "Ph.D (Agri)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Ajay Tewari, IAS", "post": "Additional Chief Secretary, Home & Political Department & Mines & Minerals Department and Chairman, State Level Recruitment Commission for Class III posts (addl)", "mobile": "9678001977", "dob": "1970-08-05", "domicile": "Uttar Pradesh", "education": "B. Tech(Elec)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Kailash Chand Samria, IAS", "post": "Chairman, Board of Revenue and Additional Chief Secretary, Fishery and Irrigation Departments (addl)", "mobile": "9868154781", "dob": "1969-11-13", "domicile": "Rajasthan", "education": "BTech (Elec)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Mrs. L. Sweety Changsan, IAS", "post": "Additional Chief Secretary to the Govt. of Assam, Revenue & DM Department and Additional Chief Secretary to the Govt. of Assam, Department of Tribal Affairs (Plain) and CEO, ASDMA (addl)", "mobile": "9435080055", "dob": "1971-06-27", "domicile": "Andhra Pradesh", "education": "BA, MA (Eco)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri M. Ariz Ahammed, IAS", "post": "Chairman, Assam Administrative and Pension Tribunal", "mobile": "8826314829", "dob": "1968-08-12", "domicile": "Andhra Pradesh", "education": "BSc (Agri), PG (Genetics), PhD", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri B. Kalyan Chakravarthy, IAS", "post": "Addl. Chief Secretary,  Panchayat & Rural Development, Cultural Affairs Departments & Chairman, State Level Recruitment Commission for Class-IV Posts (addl)", "mobile": "9642808080", "dob": "1967-07-06", "domicile": "Andhra Pradesh", "education": "BTech (Mech), PG in Mngmt", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Dr. John Berchmans Ekka, IAS", "post": "Addl. Chief Secretary, Industries, Commerce & Public Enterprises & Tea Tribes Welfare (addl.)", "mobile": "9954095488", "dob": "1968-03-29", "domicile": "Bihar", "education": "MBBS (Med)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Anurag Goel, IAS", "post": "Addl. Chief Secretary, Election Deptt. & Chief Electoral Officer, Assam", "mobile": "9435540400", "dob": "1971-08-24", "domicile": "Punjab", "education": "BE (Electonics)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Dr. Krishna Kumar Dwivedi, IAS", "post": "Addl. Chief Secretary, Hon'ble CM Assam and Power (E) Department, Chairman, AEGCL (addl) and Additional Principal Resident Commissioner, Assam Bhawan, New Delhi, Chairman, APDCL (addl)", "mobile": "9435500009", "dob": "1969-10-14", "domicile": "Uttar Pradesh", "education": "BA (Phil), MA (Hist), Ph. D.( Modern Indian History)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Mukesh Ch. Sahu, IAS", "post": "Addl. Chief Secretary, Women and Child Development and Principal Secretary cum Chief Executive Officer,\nBodoland Territorial Region, Kokrajhar, Assam (addl.)", "mobile": "9435201234", "dob": "1973-09-03", "domicile": "Jharkhand", "education": "BTech (Comp Sc)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Gyanendra Dev Tripathi, IAS", "post": "Principal Secretary, Border Protection & Development, Implementation of Assam Accord, Skill, Employment & Entrepreneurship Department and Labour Welfare Department (addl.)", "mobile": "7042294992", "dob": "1971-07-15", "domicile": "Uttar Pradesh", "education": "BE (Elec), MTech (Elec)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Jayant Narlikar, IAS", "post": "Commissioner & Secretary, Finance Department  & Member, State Level Recruitment Commission for Class-IV", "mobile": "8800377080", "dob": "1978-08-15", "domicile": "Uttar Pradesh", "education": "BA (Pol Sc), MA (Pol Sc), MPhil (Diplomacy)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Dr. Patibandla Ashok Babu, IAS", "post": "Commissioner & Secretary, Health & Family Welfare Department and Administrative Reforms & Training, Pension & Public Grievance Department and Addl. Principal Resident Commissioner and HoD, Assam Bhawan, New Delhi (addl)", "mobile": "9435368444", "dob": "1974-07-20", "domicile": "Andhra Pradesh", "education": "MBBS", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri S. S. Meenakshi Sundaram, IAS", "post": "Commissioner & Secretary to Governor of Assam and Resident Commissioner, Assam\nBhawan, Chennai (Addl)", "mobile": "9954533789", "dob": "1972-05-03", "domicile": "Tamil Nadu", "education": "BSc (Zool), MSc (Zool)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Shantanu P Gotmare,IAS", "post": "Commissioner and Secretary, Administrative Reforms & Training, Pension & Public Grievances  Departments", "mobile": "9999615699", "dob": "1977-12-05", "domicile": "Maharashtra", "education": "BSc (Phy), MSc (Phy)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Ms. Aruna Rajoria, IAS", "post": "Commissioner & Secretary, Agriculture Department and Agriculture Production Commissioner, Chairman, ARIAS and Chairman, Assam Silk Outreach Mission (ASOM) (addl.) Chairman, State Level Nodal Agency (SLNA), WDC- PMKSY", "mobile": "9435058967", "dob": "1979-09-13", "domicile": "Rajasthan", "education": "BA (Hist)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri M. S. Manivannan, IAS", "post": "Commissioner & Secretary, Personnel Department and Animal Husbandry & Veterinary Department and General Administration\nDepartment (addl)", "mobile": "9435545273", "dob": "1972-04-24", "domicile": "Tamil Nadu", "education": "BSc (Phy), MA\n(Sociology)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Siddharth Singh, IAS", "post": "Commissioner & Secretary, Medical Education & Research Departments and PD, JICA Assisted Assam Health Infrastructure Strengthening Project, Assam", "mobile": "9435545275", "dob": "1980-02-17", "domicile": "Uttar Pradesh", "education": "BSc(Bot), MSc (Anthro)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Akash Deep, IAS", "post": "Commissioner & Secretary to the Govt of Assam, Transport and Welfare of Bodoland Departments", "mobile": "9473994664", "dob": "1979-07-15", "domicile": "Uttar Pradesh", "education": "BTech (Elec)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Rakesh Kumar, IAS", "post": "MD, APDCL, Chairman, APGCL, MD, AEGCL and MD,\nAPGCL(addl)", "mobile": "9101283447", "dob": "1975-04-18", "domicile": "Haryana", "education": "BA(Eng), MA (Hindi)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Kavitha Padmanabhan, IAS", "post": "Commissioner & Secretary, Housing & Urban Affairs Department & Member, State Level Recruitment Commission for class-III Posts (Addl), Resident Commissioner, Assam Bhawan (New Delhi) (addl)", "mobile": "9818315040", "dob": "1981-02-02", "domicile": "Pondicherry", "education": "BTech (Electronics)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Dr. Om Prakash, IAS", "post": "MD, Samagra Shiksha Axom Mission", "mobile": "7086425900", "dob": "1981-04-08", "domicile": "Rajasthan", "education": "MBBS", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Virendra Mittal, IAS", "post": "Commissioner & Secretary to the Govt. of Assam, Finance Department and PD, ARIAS (addl)", "mobile": "9435148970", "dob": "1980-07-08", "domicile": "Rajasthan", "education": "B Tech(Elect)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Narayan Konwar,IAS", "post": "Commissioner & Secretary, Higher Education and School Education Department , Registrar, Cooperative Societies, MD, RUSA and Director, Official Language Implementation, Assam (addl.)", "mobile": "9435561111", "dob": "1979-02-28", "domicile": "Assam", "education": "MA (Pol Sc)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Ashwani Kumar,IAS", "post": "Additional Secretary to the Govt. of Assam, Information Technology Department and Director, Directorate of Information Technology, Electronics & Communication (DITEC), Assam and Chief Data Officer, Assam State Data Policy, 2022 (addl)", "mobile": "8130833125", "dob": "1983-04-08", "domicile": "Uttar Pradesh", "education": "B Tec (Electrical)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Binita Pegu,IAS", "post": "Commissioner & Secretary, Tribal Affairs(Plain), Social Justice & Empowerment(addl) Departments and State Enquiry Officer (addl), Assam", "mobile": "9435050394", "dob": "1967-06-02", "domicile": "Assam", "education": "B.A.", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Partha Pratim Majumdar,IAS", "post": "District Commissioner, Bajali.", "mobile": "9954180000", "dob": "1966-08-31", "domicile": "Assam", "education": "MSc, LL.B", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Nandita Dutta,IAS", "post": "Commissioner & Secretary, IT Deptt.,", "mobile": "7002772137", "dob": "1966-12-16", "domicile": "Assam", "education": "MA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Lakshmanan S,IAS", "post": "Mission Director, National Health Mission (NHM), Assam and MD, Guwahati Smart City Limited and Secretary to the Govt. of Assam, Industries, Commerce & Public Enterprises Department (only limited to CMAAA) and Managing Director, AMSCL and Commissioner of Food Safety & Drugs Administration, Assam (Addl.)", "mobile": "9435137819", "dob": "1980-10-26", "domicile": "Kerala", "education": "MBBS", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Anant Lal Gyani,IAS", "post": "Secretary to the Govt of Assam, Cooperation Department and Commissioner of Labour, Assam as additional charge", "mobile": "9435002981", "dob": "1981-03-01", "domicile": "Bihar", "education": "BSc (Hons) (Chem)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Adil Khan,IAS", "post": "Secretary to the Govt. of Assam, Excise Department and Secretary to the Govt. of Assam, Welfare of Minorities Development ,Barak Valley Development and Irrigation Departments and Project Director, Assam Resilient Rural Bridges Program (ARRBP) (Addl.)", "mobile": "9435486121", "dob": "1979-12-11", "domicile": "Uttar Pradesh", "education": "BA, MA (Pol Sc)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Tonmoy Pratim Borgohain, IAS", "post": "Secretary, Personnel Department", "mobile": "9435166483", "dob": "", "domicile": "Sivasagar", "education": "BE (Civil)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Isfaqur Rahman, IAS", "post": "Secretary, Finance Department", "mobile": "9435156139", "dob": "", "domicile": "Kamrup (M)", "education": "BSc", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Jadav Saikia, IAS", "post": "Secretary to the Govt. of Assam, Power(E) Department.", "mobile": "9435095180", "dob": "", "domicile": "Lakhimpur", "education": "MSc (Agri)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Deba Prasad Misra, IAS", "post": "District Commissioner, Hojai.", "mobile": "9435107379", "dob": "", "domicile": "Kamrup (M)", "education": "BSc, MBA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Devasish Sharma, IAS", "post": "District Commissioner, Nagaon and Joint Resident Commissioner, Assam Bhawan, Mumbai (Addl)", "mobile": "", "dob": "", "domicile": "Jorhat", "education": "BA, PGDPR", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Puspanjali Das, IAS", "post": "Secretary, Panchayat & Rural Development Department", "mobile": "9435398395", "dob": "", "domicile": "Nagaon", "education": "MSc", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Indira Kalita, IAS", "post": "Secretary, Industries, Commerce & Public Enterprise Department", "mobile": "8811085044", "dob": "", "domicile": "Kamrup (M)", "education": "BSc", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Swapna Dutta, IAS", "post": "Member, Assam Board of Revenue", "mobile": "9435031395", "dob": "", "domicile": "Dibrugarh", "education": "MA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Pallav Gopal Jha,IAS", "post": "Secretary, Science, technology & Climate Change Department and Social Justice & Empowerment Department and Implementation of Assam Accord Department (addl) and Project Director, Assam Urban Infrastructure Investment Program (addl.) and Project Director, JICA Assisted Guwahati Water Supplies Project(addl) and MD, Guwahati jal Board (addl)", "mobile": "6002062284", "dob": "1985-07-14", "domicile": "Jharkhand", "education": "BSc (Chem)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Oinam Sarankumar Singh,IAS", "post": "Secretary to the Govt. of Assam, Handloom, Textile and Sericulture Department and Secretary to the Govt. of Assam, Water Resources Department and MD, Assam Silk Outreach Mission as additional charges.", "mobile": "9854022001", "dob": "1985-02-03", "domicile": "Manipur", "education": "MSc (Zool)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Manvendra Pratap Singh,IAS", "post": "Secretary, Act East Policy Affairs Department and Fishery Department and Commissioner of Transport, Assam (Addl)", "mobile": "9435020312", "dob": "1983-07-22", "domicile": "Uttar Pradesh", "education": "MA (Hist)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Md. Shah Nawaz Choudhury, IAS", "post": "Secretary, School Education Department and MD, Textbook Production & Publication Corp (Additional charge)", "mobile": "9435144422", "dob": "1966-07-17", "domicile": "Assam", "education": "BA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Kavyashree Mahanta, IAS", "post": "Secretary, Fishery Department and Secretary, Assam Human Rights Commission (addl)", "mobile": "9435096973", "dob": "1966-06-02", "domicile": "Assam", "education": "MA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Smitakshi Baruah, IAS", "post": "Secretary, Hills Areas Department", "mobile": "9435394128", "dob": "1967-02-02", "domicile": "Assam", "education": "BA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Malavika Choudhury, IAS", "post": "Secretary, Finance Department", "mobile": "9435014395", "dob": "1967-05-31", "domicile": "Assam", "education": "MA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Dilip Kumar Borah,IAS", "post": "Secretary, Finance,and Transformation & Development Departments (addl.)", "mobile": "9435054171", "dob": "1967-11-02", "domicile": "Assam", "education": "BSC LLB", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Anasua Dutta Barua,IAS", "post": "Secretary, Food, Public Distribution and Consumer Affairs Deptt", "mobile": "", "dob": "1967-07-15", "domicile": "Assam", "education": "M.A (Education)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Varshaty Das,IAS", "post": "Secretary, Soil Conservation Deptt", "mobile": "", "dob": "1967-10-05", "domicile": "Assam", "education": "M.Sc (Zoology)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti J Keerthi,IAS", "post": "Commissioner, P&RD, Assam & MD, Swatchh Bharat Mission (Gramin) (addl.)", "mobile": "", "dob": "1989-03-30", "domicile": "Andhra Pradesh", "education": "BE (Comp Sc)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Kailash Karthik N,IAS", "post": "Director of Land Records & Survey, Assam and MD, Jal Jeevan Mission and Director, Neer Nirmal Pariyojana (addl) and Secretary to the Govt. of Assam, Public Health Engineering Department (addl)", "mobile": "", "dob": "1983-03-29", "domicile": "Tamil Nadu", "education": "BE (Electrical) MBA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Dr Jeevan B,IAS", "post": "Secretary to the Govt. of Assam, Department of Innovation, Incubation & Start-Ups (DIIS) and Secretary to the Govt. of Assam, Department of Housing and Urban Affairs , CEO, FREMAA and Officer in charge , EAP cell as additional charges.", "mobile": "", "dob": "1984-10-04", "domicile": "Karnataka", "education": "MBBS", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Pawar Narsing Sambhaji,IAS", "post": "Secretary, Finance Department and MD, AMTRON", "mobile": "", "dob": "1982-05-20", "domicile": "Maharashtra", "education": "MA (Hist)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Neera Daulagupu, IAS", "post": "Secretary, Excise Department", "mobile": "", "dob": "", "domicile": "Assam", "education": "MA (Eng)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Gayatri Bori, IAS", "post": "Secretary, Revenue & Disaster Management Department", "mobile": "", "dob": "", "domicile": "Assam", "education": "MA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Reena Mech, IAS", "post": "Secretary, Transformation & Dev Deptt", "mobile": "", "dob": "", "domicile": "Assam", "education": "MA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Thai Tsho Daw Daulagupu, IAS", "post": "Secretary, Hill Areas Department", "mobile": "", "dob": "", "domicile": "Assam", "education": "MA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Mahmood Hassan, IAS", "post": "Secretary, Administrative Reforms & Training, Pension & Public Grievances Department", "mobile": "", "dob": "", "domicile": "Assam", "education": "MA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Dipa Das, IAS", "post": "Secretary, Cooperation Department and Additional Registrar, Cooperative Society (Additional)", "mobile": "", "dob": "", "domicile": "Assam", "education": "BSc, B.T", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Pranab Kumar Sarmah, IAS", "post": "Secretary, Medical Education & Research Deptt", "mobile": "", "dob": "", "domicile": "Assam", "education": "MA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Gitimoni Phukan, IAS", "post": "Secretary, Public Health Engineering Department & Addl.\nMission Director, Jal Jeevan Mission (addl.)", "mobile": "", "dob": "", "domicile": "Assam", "education": "MA, LL.B", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Farida Samsul , IAS", "post": "Secretary, Welfare of Minorities & Development Department and Director, Assam Minorities Dev Board (addl.)", "mobile": "", "dob": "", "domicile": "Assam", "education": "MSc", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Anbamuthan M P,IAS", "post": "Secretary, PW (Roads) Deptt, Project Director, ARNIP and ASRIP (addl.), CEO, GMDA (addl.) and Project Director, Assam Disaster Resilient Hill Area Roads Development Project (ADRHARDP) (Addl.)", "mobile": "", "dob": "1985-09-19", "domicile": "Tamil Nadu", "education": "BSc (Phy)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Bikram Kairi,IAS", "post": "District commissioner, Dibrugarh", "mobile": "", "dob": "1985-01-08", "domicile": "Assam", "education": "BE (Com Sc)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Dr Sadnek Singh,IAS", "post": "Secretary, Animal Husbandry & Veterinary Department and Managing Director, Assam Livestock and Poultry Corporation Ltd, Khanapara", "mobile": "", "dob": "1978-12-14", "domicile": "Punjab", "education": "MBBS", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Kimnei Changsan, IAS", "post": "District Commissioner, Baksa.", "mobile": "", "dob": "1971-09-23", "domicile": "Assam", "education": "BA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Madhu Sudan Nath, IAS", "post": "District Commissioner, Chirang.", "mobile": "", "dob": "1967-03-02", "domicile": "Assam", "education": "MA, LL.B", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Megha Nidhi Dahal,IAS", "post": "District Commissioner, Dhubri.", "mobile": "", "dob": "1987-05-07", "domicile": "Sikkim", "education": "BE (Info Sc  & Engg)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Rohan Kumar Jha,IAS", "post": "District Commissioner, Barpeta", "mobile": "", "dob": "1988-11-13", "domicile": "Jharkhand", "education": "B Tech (Mech)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri P Vijaya Bhaskar Reddy,IAS", "post": "Secretary, Transformation & Development Deptt and CEO, SITA (addl.)", "mobile": "", "dob": "1985-05-25", "domicile": "Andhra Pradesh", "education": "B Tech (Electronice & Comm)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Hivare Nisarg Gautam ,IAS", "post": "Secretary, Chief Minister’s Office & Managing Director, Assam Urban Infrastructure\nDevelopment & Finance Corporation Ltd. (AUIDFCL)(Addl.) and MD,\nAIDC  (additional charge)", "mobile": "", "dob": "1990-08-09", "domicile": "Maharashtra", "education": "B Tech (IT)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Sumit Sattawan,IAS", "post": "District Commissioner, Tinsukia", "mobile": "", "dob": "1987-02-12", "domicile": "Rajasthan", "education": "B Tech (Electrical)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Vijaylakshmi Barua, IAS", "post": "Secretary, Handloom, Textiles & Sericulture Department and Welfare of Bodoland Department (addl)", "mobile": "", "dob": "1970-06-19", "domicile": "Assam", "education": "BA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Panchali Kakati, IAS", "post": "Secretary, Animal Husbandary and Vety Department and Director, Dairy Development (addl.)", "mobile": "", "dob": "1970-05-11", "domicile": "Assam", "education": "BA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Mauchumi Barua, IAS", "post": "Secretary, Finance Department.", "mobile": "", "dob": "1969-02-27", "domicile": "Assam", "education": "MA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Aayush Garg,IAS", "post": "District Commissioner, Cachar", "mobile": "", "dob": "1991-09-10", "domicile": "Punjab", "education": "CA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Narendra Kumar Shah,IAS", "post": "Secretary to the Govt. of Assam, Chief Minister's Secretariat, Dispur and Commissioner, Industries & Commerce, Assam (addl.) and CEO, Corporate Social Responsibility\nAuthority of Assam (CSRAA) as additional charges.", "mobile": "", "dob": "1988-07-23", "domicile": "Madhya Pradesh", "education": "BTech (Civil)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Dr P Uday Praveen,IAS", "post": "District Commissioner, Kokrajhar.", "mobile": "", "dob": "1988-01-28", "domicile": "Andhra Pradesh", "education": "MBBS", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Mridul Yadav,IAS", "post": "District Commissioner, Sivasagar", "mobile": "", "dob": "1991-08-27", "domicile": "Madhya Pradesh", "education": "BTech (Mech) MBA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Dibakar Nath,IAS", "post": "District Commissioner, Bongaigaon", "mobile": "", "dob": "1985-03-31", "domicile": "Assam", "education": "BTech (Electrical)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Swapneel Paul,IAS", "post": "District Commissioner, Kamrup (M)", "mobile": "", "dob": "1989-11-12", "domicile": "Nagaland", "education": "B.Tech (Elec.)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Aditya Vikram Yadav,IAS", "post": "District Commissioner, Lakhimpur", "mobile": "", "dob": "1993-07-22", "domicile": "Delhi", "education": "BA, LLB", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Masanda Magdalin Pertin,IAS", "post": "Additional Secretary to the Govt. of Assam, Home & Political Department.", "mobile": "", "dob": "1990-12-25", "domicile": "Arunachal Pradesh", "education": "M.A. M.Phil (International Politics)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Javir Rahul Suresh,IAS", "post": "District Commissioner, Dhemaji", "mobile": "", "dob": "1992-06-01", "domicile": "Maharashtra", "education": "BE (Elec. & Telecom)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Pradeep Kumar Dwivedi,IAS", "post": "District Commissioner, Sribhumi", "mobile": "", "dob": "1991-12-30", "domicile": "Madhya Pradesh", "education": "B.Tech (Elec.)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Jay Shivani,IAS", "post": "District Commisioner, Jorhat", "mobile": "", "dob": "1994-11-07", "domicile": "Madhya Pradesh", "education": "B.Tech (Comp. Sc.)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Rahul Kumar Gupta,IAS", "post": "District Commissioner, South Salmara", "mobile": "", "dob": "1993-10-22", "domicile": "Uttar Pradesh", "education": "BA (Education) MA (Dev. Studies)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Neha Yadav,IAS", "post": "District Commissioner, Charaideo", "mobile": "", "dob": "1992-05-18", "domicile": "Haryana", "education": "MBBS", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti. Gayatri Devidas Hyalinge,IAS", "post": "District Commissioner, Dima Hasao.", "mobile": "", "dob": "1990-02-24", "domicile": "Maharashtra", "education": "B.Tech (Info. Tech)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti. Simi Karan,IAS", "post": "District Commissioner, Tamulpur.", "mobile": "", "dob": "1997-08-16", "domicile": "Odisha", "education": "B. Tech (Electrical)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Abhishek Jain,IAS", "post": "District Commissioner, Hailakandi.", "mobile": "", "dob": "1996-01-27", "domicile": "Delhi", "education": "B.Com (Hons)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Aranyak Saikia,IAS", "post": "District Commissioner, Karbi Anglong.", "mobile": "", "dob": "1994-03-15", "domicile": "Assam", "education": "MA (Eco), M.Phil", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti. Preeti Kumari,IAS", "post": "District Commissioner, West Karbi Anglong", "mobile": "", "dob": "1992-03-31", "domicile": "Bihar", "education": "B.Tech (CS), MBA", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti. Ayushi Jain,IAS", "post": "District Commissioner, Darrang", "mobile": "", "dob": "1992-11-01", "domicile": "Madhya Pradesh", "education": "BE (CS)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Kuntal Moni Sarmah Bordoloi, IAS", "post": "Joint Secretary to the Govt. of Assam, P&RD and MD, ASRLM and OSD to Hon’ble Chief Minister, Assam as additional charges.", "mobile": "", "dob": "1973-01-01", "domicile": "Assam", "education": "B.Sc, MBA, L.L.B.", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Jay Vikas, IAS", "post": "District Commissioner, Udalguri.", "mobile": "", "dob": "1998-05-14", "domicile": "Jammu & Kashmir", "education": "B.Tech", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Kriti Chachra, IAS", "post": "Joint Secretary to the Govt. of Assam, Department of Housing & Urban Affairs and attached to the Guwahati Municipal Corporation as Additional Commissioner", "mobile": "", "dob": "1993-09-26", "domicile": "Delhi", "education": "B.Sc", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Srishti Singh, IAS", "post": "District Commissioner, Majuli.", "mobile": "", "dob": "1997-09-07", "domicile": "Uttar Pradesh", "education": "B.Tech", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Parikshit Thoudam, IAS", "post": "Joint Secretary to the Govt, of Assam, Finance Department and Special Commissioner of Taxes, Office of the Commissionerate of Taxes, Assam (addl, charge)", "mobile": "", "dob": "1996-06-22", "domicile": "Manipur", "education": "B.Sc", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Ankur Das", "post": "Co-District Commissioner, Duliajan", "mobile": "", "dob": "1994-12-04", "domicile": "Meghalaya", "education": "B.Tech (Biotechnology)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Anand Malhotra", "post": "Co-District Commissioner, Jonai, Dhemaji", "mobile": "", "dob": "1990-08-06", "domicile": "Haryana", "education": "B.E. (Civil), M.B.A.", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Arjit Mahajan", "post": "Additional Disttict Commissioner i/c, Bijni.", "mobile": "", "dob": "1996-06-25", "domicile": "Madhya Pradesh", "education": "B.Tech (Production & Industrial Engg.)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Mridul Shivhare", "post": "Staff Officer to the Chief Secretary, Assam", "mobile": "8638802167", "dob": "1999-09-23", "domicile": "Madhya Pradesh", "education": "B.A. (Pol. Sc.)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Ms. Shivani Jerngal", "post": "Co-District Commissioner, Bokakhat, Golaghat", "mobile": "", "dob": "1996-08-10", "domicile": "Jammu & Kashmir", "education": "B.Tech (Electronics & Communication)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti. Sanskriti Somani", "post": "Co-District Commissioner, Rangapara", "mobile": "", "dob": "1995-03-27", "domicile": "Madhya Pradesh", "education": "B.Tech (Electronics)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Yimkum I. Ozukum", "post": "Co-District Commissioner, Golakganj.", "mobile": "", "dob": "", "domicile": "Nagaland", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Aditya Pratap Singh", "post": "Co-District Commissioner, Gohpur", "mobile": "", "dob": "1999-11-23", "domicile": "Uttar Pradesh", "education": "BA LLB", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Jayant Charan", "post": "Co-District Commissioner, Khowang.", "mobile": "", "dob": "1999-01-26", "domicile": "Rajasthan", "education": "BSc. (Maths)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti. Sakshama", "post": "Co-District Commissioner, Dergaon.", "mobile": "", "dob": "1999-11-18", "domicile": "Punjab", "education": "B.Com", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti. Pratibha Meshram", "post": "Co-District Commissioner, Nazira", "mobile": "", "dob": "1996-07-10", "domicile": "Delhi", "education": "BSc. (Chem)", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Lourembam Nelson Mangangcha", "post": "Addl. District Commissioner ADC, i/c, Gossaigaon", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Tejas Agnihotri, IAS", "post": "Assistant District Commissioner, Nagaon.", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Akanchha Singh, IAS", "post": "Assistant District Commissioner, Dhubri.", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti KN Chandana Jahnavi, IAS", "post": "Assistant District Commissioner, Sivasagar", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Sumbhi Srivastava, IAS", "post": "Assistant District Commissioner, Dibrugarh", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Unhale Ashish Vidbyadhar, IAS", "post": "Assistant District Commissioner, Cachar", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smti Sindhu N Raghavan, IAS", "post": "Assistant District Commissioner, Jorhat", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smt Sushmita Phukhan", "post": "RD, RBI GUWAHATI", "mobile": "7506847793", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Smt Mary Deng", "post": "BO AND CGM, RBI GUWAHATI", "mobile": "9830267771", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Bhaskar Baglari", "post": "GM ISSUE RBI GUWAHATI", "mobile": "9920232369", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Chetan Srivastava", "post": "GM NFR RAILWAY MALIGAON", "mobile": "9163344050", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "ASHISH BANSAL", "post": "GM CONSTRUCTION NFR RAILWAY MALIGAON", "mobile": "9957556000", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "DAVID LALMALSAWMA", "post": "PRINCIPAL FIN ADVISOR NFR RAILWAY MALIGAON", "mobile": "9957556100", "dob": "", "domicile": "", "education": "", "state": "ASSAM", "giftSent": false, "giftNote": ""}, {"name": "Shri Manish Gupta, IAS(AGMUT:91)", "post": "Chief Secretary", "mobile": "9958552553", "dob": "1967-07-21", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Kaling Tayeng, IAS(AGMUT:98)", "post": "1.Principal Secretary (i). Political (ii). PWD (iii). Election (iv). Home (v). Border Affairs 2. Div. Commissioner (West) 3. Principal Resident Commissioner, New Delhi", "mobile": "9436040026", "dob": "1974-07-29", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Vivek Pandey, IAS (AGMUT: 2003)", "post": "1. Commissioner (i). Transport (ii). Agriculture Production (iii). Urban Affairs (Urban Development, Town Planning, Urban Local Bodies, Housing) 2. Divisional Commissioner East 3. Chairman, APSSB", "mobile": "7838321655", "dob": "1979-07-22", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Sonam Chombay, IRS (AGMUT:2003)", "post": "1. Commissioner-cum-Secy to HCM 2. Commissioner (Hydro Power) 3. Joint Secy (Cabinate)", "mobile": "9402275045", "dob": "1977-04-25", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Sri Amjad Tak, IAS(AGMUT:2005)", "post": "Commissioner 1. Education 2. Divisional Commissioner (Central) 3. PHE & WS", "mobile": "9436040067", "dob": "1978-07-05", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Pawan Kumar Sain, IAS (AGMUT:2005)", "post": "Commissioner 1. Health & Family Welfare Chief Electoral Officer, Arunachal Pradesh", "mobile": "8308835624", "dob": "1980-06-09", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Saugat Biswas IAS(AGMUT:2006)", "post": "Commissioner 1. Transport 2. Law", "mobile": "9682199224", "dob": "1975-01-02", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Smt. Y.W. Ringu, IAS(AGMUT:2008)", "post": "Commissioner 1. Finance. 2. Tax & Excise.", "mobile": "9436040018", "dob": "1967-08-13", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Smt. Mimum Tayeng, IAS (AGMUT:2009)", "post": "Commissioner 1. Textile and Handicraft 2. WCD 3. Parliamentary Affairs", "mobile": "9436895209", "dob": "1967-02-25", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri C.N Longphai, IAS (AGMUT:2009)", "post": "Commissioner (Home) & IG Prison", "mobile": "9436040054", "dob": "1966-02-25", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Sri Tai Kaye, IAS (AGMUT:2010)", "post": "Secretary Cultural Affairs", "mobile": "6003892152", "dob": "1966-03-01", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Rajendar Kumar Sharma, IAS (AGMUT: 2010)", "post": "Commissioner 1. Planning 2. Power 3. Electrical", "mobile": "", "dob": "1966-04-29", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shi Nyali Ete, IAS (AGMUT:2010)", "post": "Commissioner 1. IPR & Printing 2. Home/IG Prison w.e.f. 01.03.2026", "mobile": "9436044048", "dob": "1967-04-09", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Audesh Kumar Singh, IAS (AGMUT:2010)", "post": "Commissioner 1. Land Management 2. Geology & Mining", "mobile": "9862089999", "dob": "1967-02-12", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Dani Salu", "post": "Secretary 1. Disaster Management 2. PWD", "mobile": "8730058302", "dob": "1974-01-26", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Hage Tari, IOFS(1991)", "post": "Secretary 1. Member (APSSB) 2. Industries", "mobile": "8146111510", "dob": "1966-07-01", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Pige Ligu, IAS (AGMUT:2011)", "post": "Secretary Water Resources Department", "mobile": "9436041816", "dob": "1968-06-09", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Abu Tayeng, IAS (AGMUT:2011)", "post": "Secretary 1. Sports & Youth Affairs 2. SJETA 3. State Lotteries", "mobile": "8974461301", "dob": "1968-11-16", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Taru Talo, IAS (AGMUT:2011)", "post": "Secretary 1. Trade & Commerce 2. State Election Commission", "mobile": "9436630337", "dob": "1966-03-24", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Dr. Sonal Swaroop, IAS (AGMUT:2012)", "post": "Secretary 1. (Rural Development & Panchayati Raj) 2. Cooperation 3. Information Technology & Communication", "mobile": "9811292196", "dob": "1985-10-07", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Ms Sumedha Yadav, IAS (AGMUT:2012)", "post": "Secretary 1. Science & Technology 2. Lokayukta", "mobile": "9436098521", "dob": "1967-07-22", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Duly Kamduk, IAS (AGMUT:2013)", "post": "Secretary 1. Education 2. SPD (ISSE)", "mobile": "9485230633", "dob": "1967-03-31", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Smti Mamta Riba, IAS (AGMUT:2013)", "post": "1. Civil Aviation / Gazetter 2. Public Libraries / Art & Culture", "mobile": "", "dob": "1968-12-04", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Sri P.N. Thongun, IAS (AGMUT: 2012)", "post": "Secretary RWD", "mobile": "9968309885", "dob": "1966-05-01", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri YVVJ Rajasekhar, IAS (AGMUT:2012)", "post": "Secretary Fisheries", "mobile": "9999533859", "dob": "1969-04-04", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Ms. Koj Rinya, IFS (2006)", "post": "Secretary 1. Horticulture 2. Member (APSSB)", "mobile": "9402275229", "dob": "1979-10-19", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Ms. Bullo Mamu, IRS (2014)", "post": "Secretary 1. Skill Development", "mobile": "", "dob": "1987-07-19", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Ranphoa Ngowa, IFS, (AGMUT: 2014)", "post": "Secretary 1. Political & Border Affairs 2. Tourism", "mobile": "8130076297", "dob": "1986-03-01", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Smti. Anu Singh, ICLS", "post": "Secretary 1. Economics & Statistics 2. Nodal Officer- Parivar Pehchanpatra 3. OSD Planning", "mobile": "9052096831", "dob": "1984-06-21", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Vivek HP, IAS(2016)", "post": "Secretary Health & Family Welfare", "mobile": "", "dob": "1984-06-05", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Samuel Changkija, IFS", "post": "Secretary Agriculture", "mobile": "7298483353", "dob": "1976-01-28", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Ms. Priytarshny P., IAS (2014)", "post": "Secretary (APPSC)", "mobile": "", "dob": "1972-03-27", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Wayong Khimhun, IAS", "post": "Secretary 1. DoTCL Director (DoTCL)", "mobile": "9436620199", "dob": "", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Karma Leki, IAS", "post": "Secretary DoKAA", "mobile": "9862805505", "dob": "1982-01-01", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri Mige Kamki, IAS", "post": "Secretary Legal Metrology & CA", "mobile": "9436041111", "dob": "1969-08-01", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Ms. Pebika Lego, IAS (AGMUT: 2023)", "post": "ADC, Pasighat", "mobile": "7668428447", "dob": "1988-02-04", "domicile": "", "education": "", "state": "ARUNACHAL PRADESH", "giftSent": false, "giftNote": ""}, {"name": "Shri. Sriram Taranikanti", "post": "1. Director, LBSNAA, Mussoorie.", "mobile": "8790633378", "dob": "1966-07-11", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Shashi Ranjan Kumar", "post": "1. Secretary, UPSC, New Delhi.", "mobile": "9810495814", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. M. Nagaraju", "post": "1. Secretary, Department of Financial Services, Ministry of Finance, Govt. of India.", "mobile": "9436541983", "dob": "1966-05-24", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Jitendra Kumar Sinha", "post": "Chief Secretary to the Govt. of Tripura.", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Puneet Agarwal", "post": "1. Additional Secretary & Financial Advisor in the Ministry of Road Transport & Highways, New Delhi, Govt. of India.", "mobile": "", "dob": "1974-07-23", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Smt. Saumya Gupta", "post": "1. Joint Secretary, Department of Higher Education, On central deputation.", "mobile": "9811419728", "dob": "1978-10-02", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Brijesh Pandey", "post": "Secretary to the Govt. of Tripura", "mobile": "9138124133", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Kiran Gitte", "post": "Secretary to the Govt. of Tripura", "mobile": "9138124150", "dob": "1975-09-05", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Abhishek Singh", "post": "Secretary to the Govt. of Tripura", "mobile": "9138124157", "dob": "1979-06-23", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Dr. Parshant Kumar Goyal", "post": "Secretary to the Govt. of Tripura", "mobile": "", "dob": "1979-09-23", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Tapas Roy", "post": "Secretary to the Govt. of Tripura", "mobile": "9138124140", "dob": "1967-02-20", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Mohd. Zubair Ali Hashmi", "post": "1. Director, NITI Aayog, New  Delhi", "mobile": "7897607910", "dob": "1978-02-03", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Dr. Sandeep R. Rathod", "post": "", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Dr. Milind Dharmrao Ramteke", "post": "Secretary to the Govt. of Tripura", "mobile": "9138124142", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Tarun Kanti Debnath", "post": "Secretary to the Govt. of Tripura", "mobile": "9138124132", "dob": "1966-02-02", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Dr. Mahatme Sandeep Namdeo", "post": "1. Private Secy. to the Union Minister for Panchayati Raj & Fisheries, Animal Husbandry and Dairying (Shri Rajiv Ranjan Singh), GoI, New Delhi.", "mobile": "9402137219", "dob": "1984-06-07", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri Raval Hamendra Kumar", "post": "Special Secretary to the Govt. of Tripura", "mobile": "9138124166", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri Debapriya Bardhan", "post": "", "mobile": "8414038522", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Dr. Brahmneet Kaur", "post": "Special Secretary to the Govt. of Tripura", "mobile": "9111230126", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Dr. Shailesh Kumar Yadav", "post": "1. Deputy Secretary, National Health Authority", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Smt. Smitha Mol M. S.", "post": "1. Deputy Secretary in the 8th CPC under the D/o Expenditure, Ministry of Finance, N. Delhi.", "mobile": "9402136677", "dob": "1985-06-25", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Ratan Biswas", "post": "Special Secretary to the Govt. of Tripura", "mobile": "9194364677", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Tapan Kumar Das", "post": "Special Secretary to the Govt. of Tripura", "mobile": "9138124155", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Smt. Rakhi Biswas", "post": "Special Secretary to the Govt. of Tripura", "mobile": "9194364628", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Suithuifro Mog", "post": "", "mobile": "9138123237", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Smt. Kuntal Das", "post": "Special Secretary to the Govt. of Tripura", "mobile": "9194365447", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Tamal Majumder", "post": "Special Secretary to the Govt. of Tripura", "mobile": "9138123293", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Nirmal Adhikari", "post": "Special Secretary to the Govt. of Tripura", "mobile": "9194365408", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Nagesh Kumar B", "post": "1.  Private Secretary to the Hon’ble Minister for Consumer Affairs, Food & Public Distribution and New and Renewable Energy (Shri Pralhad Joshi), GoI, New Delhi..", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Smt. Vishwasree B.", "post": "1. Executive Director (Tobacco Board)", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri Govekar Mayur Ratilal", "post": "1. Private Secretary to the Union Minister of Communications and DONER (Shri Jyotiraditya M. Scindia), in Ministry of Communications at the level of Deputy Secretary.", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Sankar Debnath", "post": "1. Director, Audit (Finance Deptt.), Tripura", "mobile": "9193667106", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Usa Jen Mog", "post": "1.  Addl. Chief Electoral Officer Tripura", "mobile": "9138123236", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Ratnajit Debbarma", "post": "1. Director, Tribal Research & Cultural Institute, Tripura.", "mobile": "9138123243", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Ajit Sukladas", "post": "1. Director of Handloom, Handicrafts & Sericulture", "mobile": "9138123586", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri.Devananda Reang", "post": "1. Director, Economics & Statistics", "mobile": "9138123222", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri Saju Vaheed A", "post": "1. MD, NHM with addl. charges of Member Secretary, NAM.", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Smt. Aditi Majumder", "post": "1. Addl. Commr. of Departmental Inquires.", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Santosh Das", "post": "1. Director, Fisheries", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Dhanbabu Reang", "post": "1. Secretary, Tripura Human Rights Commission.", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Dasarath Debbarma", "post": "1. Registrar of Coop Societies, Agartala", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Dr. Vishal Kumar", "post": "1. D.M & Collector, West Tripura District, Agartala.", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Dr. Siddharth Shiv Jaiswal", "post": "1. D.M.& Collector, Sepahijala District, Bishramganj", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Smt. Chandni Chandran", "post": "1. D.M. & Collector, North Tripura District, Dharmanagar", "mobile": "9138222342", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri.Tarit Kanti Chakma", "post": "1. CEO, Tripura Rural Livelihood Mission, Agartala.", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Rajib Datta", "post": "1. Director, Elementary Education.", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Biplab Das", "post": "1. Addl. Secretary, Tripura Legislative Assembly, Agartala", "mobile": "9862783770", "dob": "1968-12-17", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Subhash Chandra Saha", "post": "1. Addl. Secretary RD Deptt.", "mobile": "9436137638", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Rajat Pant", "post": "1. District Magistrate & Collector, Khowai", "mobile": "9138252220", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Muhammad Sajad P", "post": "1. D.M. & Collector, South District, Tripura", "mobile": "9138232220", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Mihir Kanti Gop", "post": "1. Commissioner, TUDA", "mobile": "9194361228", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Vivek H. B.", "post": "1. District Magistrate & Collector, Dhalai District, Ambassa.", "mobile": "9138262672", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Prashant Badal Negi", "post": "1. Director, Tourism", "mobile": "9197177689", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri Upendra Jamatia", "post": "1. ADM & Collector,(PP) Sepahijala District", "mobile": "9187298497", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri. Sagar Sobhan Debnath", "post": "1. Additional District Magistrate & Collector (PPs) Unakoti District.", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri Rinku Lather", "post": "1. D.M. & Collector, Gomati Tripura", "mobile": "9138212222", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri Pradeep Karishnaraj", "post": "1. Director, Skill Development", "mobile": "", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Ms.Megha Jain", "post": "1. D.M. & Collector, Unakoti District, Kailashahar", "mobile": "9138242222", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri Chiranjeev Anand", "post": "1. Commissioner of Taxes, Agartala.", "mobile": "9138123259", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Shri Gugulavath Sharath Nayak", "post": "1. CEO, Ayushman Bharat", "mobile": "9138262622", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}, {"name": "Dr. Deepak Kumar", "post": "1. Director, Industries & Commerce.", "mobile": "9195824028", "dob": "", "domicile": "", "education": "", "state": "TRIPURA", "giftSent": false, "giftNote": ""}];
+
+// ========== STATE ==========
+let officials = [];
+let filtered = [];
+let currentPage = 1;
+const PAGE_SIZE = 50;
+let currentTab = 'dashboard';
+let sortDir = {};
+
+// ========== INIT ==========
+function init() {
+  const saved = localStorage.getItem('ne_officials_v2');
+  if (saved) {
+    try { officials = JSON.parse(saved); }
+    catch(e) { officials = [...ORIGINAL_DATA]; }
+  } else {
+    officials = JSON.parse(JSON.stringify(ORIGINAL_DATA));
+  }
+  updateTodayBadge();
+  applyFilters();
+  renderDashboard();
+  renderCalendar();
+  renderGifts();
+}
+
+function save() {
+  localStorage.setItem('ne_officials_v2', JSON.stringify(officials));
+}
+
+// ========== DATE UTILITIES ==========
+function today() { return new Date(); }
+
+function daysToNextBirthday(dob) {
+  if (!dob) return null;
+  const t = today();
+  const d = new Date(dob);
+  let next = new Date(t.getFullYear(), d.getMonth(), d.getDate());
+  if (next < t) next.setFullYear(t.getFullYear() + 1);
+  const diff = Math.ceil((next - t) / 86400000);
+  return diff === 365 ? 0 : diff;
+}
+
+function formatDob(dob) {
+  if (!dob) return '—';
+  const d = new Date(dob);
+  return d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+}
+
+function calcAge(dob) {
+  if (!dob) return null;
+  const d = new Date(dob);
+  const t = today();
+  let age = t.getFullYear() - d.getFullYear();
+  const bday = new Date(t.getFullYear(), d.getMonth(), d.getDate());
+  if (bday > t) age--;
+  return age;
+}
+
+function monthName(m) {
+  return ['January','February','March','April','May','June','July','August','September','October','November','December'][m];
+}
+
+function stateShort(s) {
+  if (!s) return '';
+  if (s === 'ARUNACHAL PRADESH') return 'ARUNACHAL';
+  return s;
+}
+
+// ========== TODAY BADGE ==========
+function updateTodayBadge() {
+  const t = today();
+  document.getElementById('todayBadge').textContent = t.toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'long', year:'numeric'});
+}
+
+// ========== DASHBOARD ==========
+function renderDashboard() {
+  const t = today();
+  const withDob = officials.filter(o => o.dob);
+  const todayBdays = withDob.filter(o => daysToNextBirthday(o.dob) === 0);
+  const next7 = withDob.filter(o => { const d = daysToNextBirthday(o.dob); return d > 0 && d <= 7; });
+  const next30 = withDob.filter(o => { const d = daysToNextBirthday(o.dob); return d > 0 && d <= 30; });
+  const giftsSent = officials.filter(o => o.giftSent).length;
+  const states = [...new Set(officials.map(o => o.state).filter(Boolean))].length;
+
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat-card gold">
+      <div class="stat-num">${officials.length}</div>
+      <div class="stat-label">Total Officials</div>
+      <div class="stat-sub">${states} States/UTs</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-num">${withDob.length}</div>
+      <div class="stat-label">With DOB</div>
+      <div class="stat-sub">${officials.length - withDob.length} missing</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-num">${todayBdays.length}</div>
+      <div class="stat-label">Birthdays Today 🎂</div>
+      <div class="stat-sub">${next7.length} in next 7 days</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-num">${next30.length}</div>
+      <div class="stat-label">Upcoming (30 days)</div>
+      <div class="stat-sub">Needs attention</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-num">${giftsSent}</div>
+      <div class="stat-label">Gifts Sent</div>
+      <div class="stat-sub">${officials.length - giftsSent} pending</div>
+    </div>
+    <div class="stat-card gold">
+      <div class="stat-num">${officials.filter(o=>o.mobile).length}</div>
+      <div class="stat-label">With Mobile</div>
+      <div class="stat-sub">WhatsApp ready</div>
+    </div>
+  `;
+
+  // Today banner
+  const banner = document.getElementById('todayBanner');
+  if (todayBdays.length > 0) {
+    banner.classList.add('visible');
+    banner.innerHTML = `
+      <div class="birthday-banner-title">
+        <span class="cake">🎂</span>
+        Birthday${todayBdays.length > 1 ? 's' : ''} Today — ${todayBdays.length} Official${todayBdays.length > 1 ? 's' : ''}!
+      </div>
+      <div class="bday-list">
+        ${todayBdays.map(o => `
+          <div class="bday-chip">
+            <div>
+              <div class="bday-chip-name">${o.name}</div>
+              <div class="bday-chip-post">${stateShort(o.state)} • Turns ${calcAge(o.dob) + 1} today</div>
+            </div>
+            ${o.mobile ? `<button class="whatsapp-btn" onclick="openWa(${officials.indexOf(o)})">💬 WhatsApp</button>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else {
+    banner.classList.remove('visible');
+  }
+
+  // Upcoming section
+  const upcoming = withDob
+    .map(o => ({ ...o, idx: officials.indexOf(o), days: daysToNextBirthday(o.dob) }))
+    .filter(o => o.days > 0 && o.days <= 30)
+    .sort((a, b) => a.days - b.days);
+
+  const section = document.getElementById('upcomingSection');
+  if (upcoming.length === 0) {
+    section.innerHTML = `<div class="section-title">Upcoming Birthdays <span class="badge">NEXT 30 DAYS</span></div>
+      <div class="empty-state"><div class="icon">🎈</div><p>No birthdays in the next 30 days</p></div>`;
+    return;
+  }
+  section.innerHTML = `
+    <div class="section-title">Upcoming Birthdays <span class="badge">NEXT 30 DAYS</span></div>
+    <div class="upcoming-grid">
+      ${upcoming.map(o => `
+        <div class="upcoming-card">
+          <div class="days-circle ${o.days <= 3 ? 'urgent' : o.days <= 7 ? 'soon' : 'upcoming'}">
+            <div class="num">${o.days}</div>
+            <div class="lbl">${o.days === 1 ? 'day' : 'days'}</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div class="uc-name">${o.name}</div>
+            <div class="uc-post">${o.post}</div>
+            <div class="uc-meta">
+              <span class="state-pill pill-${stateShort(o.state)}">${stateShort(o.state)}</span>
+              <span class="uc-dob">🎂 ${formatDob(o.dob)}</span>
+              ${o.mobile ? `<button class="whatsapp-btn" style="font-size:11px;padding:3px 9px" onclick="openWa(${o.idx})">💬 WA</button>` : ''}
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ========== FILTERS & TABLE ==========
+function applyFilters() {
+  const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+  const state = document.getElementById('stateFilter')?.value || '';
+  const dobF = document.getElementById('dobFilter')?.value || '';
+  const giftF = document.getElementById('giftFilter')?.value || '';
+  const sortKey = document.getElementById('sortBy')?.value || 'name';
+  const t = today();
+
+  filtered = officials.filter((o, i) => {
+    if (search && !o.name.toLowerCase().includes(search) &&
+        !o.post.toLowerCase().includes(search) &&
+        !(o.state || '').toLowerCase().includes(search) &&
+        !(o.mobile || '').includes(search)) return false;
+    if (state && o.state !== state) return false;
+    if (dobF === 'has-dob' && !o.dob) return false;
+    if (dobF === 'no-dob' && o.dob) return false;
+    if (dobF === 'this-month' && (!o.dob || new Date(o.dob).getMonth() !== t.getMonth())) return false;
+    if (dobF === 'next-30') {
+      const d = daysToNextBirthday(o.dob);
+      if (d === null || d > 30) return false;
+    }
+    if (giftF === 'sent' && !o.giftSent) return false;
+    if (giftF === 'pending' && o.giftSent) return false;
+    return true;
+  });
+
+  filtered.sort((a, b) => {
+    if (sortKey === 'name') return a.name.localeCompare(b.name);
+    if (sortKey === 'state') return (a.state || '').localeCompare(b.state || '');
+    if (sortKey === 'days') {
+      const da = daysToNextBirthday(a.dob), db = daysToNextBirthday(b.dob);
+      if (da === null && db === null) return 0;
+      if (da === null) return 1;
+      if (db === null) return -1;
+      return da - db;
+    }
+    if (sortKey === 'dob-month') {
+      if (!a.dob && !b.dob) return 0;
+      if (!a.dob) return 1;
+      if (!b.dob) return -1;
+      const am = new Date(a.dob).getMonth(), bm = new Date(b.dob).getMonth();
+      if (am !== bm) return am - bm;
+      return new Date(a.dob).getDate() - new Date(b.dob).getDate();
+    }
+    return 0;
+  });
+
+  currentPage = 1;
+  document.getElementById('countLabel').textContent = `${filtered.length} of ${officials.length} officials`;
+  renderTable();
+  renderPagination();
+}
+
+function renderTable() {
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const rows = filtered.slice(start, start + PAGE_SIZE);
+  const tbody = document.getElementById('tableBody');
+  if (!tbody) return;
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="icon">🔍</div><p>No results found</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map((o, ri) => {
+    const realIdx = officials.indexOf(o);
+    const days = daysToNextBirthday(o.dob);
+    const age = calcAge(o.dob);
+    let daysTag = '';
+    if (days === null) daysTag = '<span class="days-tag no-dob">No DOB</span>';
+    else if (days === 0) daysTag = '<span class="days-tag today">🎂 TODAY!</span>';
+    else if (days <= 7) daysTag = `<span class="days-tag urgent">⚡ ${days}d</span>`;
+    else if (days <= 30) daysTag = `<span class="days-tag soon">📅 ${days}d</span>`;
+    else daysTag = `<span class="days-tag far">${days}d</span>`;
+    
+    const statePill = `<span class="state-pill pill-${stateShort(o.state)}">${stateShort(o.state)}</span>`;
+    
+    return `<tr>
+      <td style="color:#bbb;font-size:11px">${start + ri + 1}</td>
+      <td>
+        <div class="td-name">${escHtml(o.name)}</div>
+        ${o.domicile ? `<div style="font-size:11px;color:#aaa;margin-top:2px">Domicile: ${escHtml(o.domicile)}</div>` : ''}
+      </td>
+      <td class="td-post">${escHtml(o.post)}</td>
+      <td>${statePill}</td>
+      <td class="td-dob">${formatDob(o.dob)}</td>
+      <td>
+        <div class="td-days">${daysTag}</div>
+        ${age !== null ? `<div class="td-age" style="margin-top:3px">Age: ${age}y</div>` : ''}
+      </td>
+      <td class="td-mobile">
+        ${o.mobile ? `<a href="tel:+91${o.mobile}">${o.mobile}</a>` : '<span style="color:#ddd">—</span>'}
+      </td>
+      <td class="gift-cell">
+        <button class="gift-toggle ${o.giftSent ? 'sent' : ''}" onclick="toggleGift(${realIdx})" title="${o.giftSent ? 'Gift Sent ✓' : 'Mark Gift Sent'}">
+          ${o.giftSent ? '✅' : '○'}
+        </button>
+      </td>
+      <td>
+        <div class="action-cell">
+          <button class="whatsapp-icon-btn ${o.mobile ? '' : 'no-phone'}" onclick="${o.mobile ? `openWa(${realIdx})` : 'void(0)'}" title="Send WhatsApp">💬</button>
+          <button class="btn-quick-edit" onclick="openQePanel(${realIdx})" title="Quick Edit">✏️ Edit</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderPagination() {
+  const total = Math.ceil(filtered.length / PAGE_SIZE);
+  const pg = document.getElementById('pagination');
+  if (!pg) return;
+  if (total <= 1) { pg.innerHTML = ''; return; }
+  let html = `<button class="page-btn" onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹ Prev</button>`;
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || Math.abs(i - currentPage) <= 2) {
+      html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - currentPage) === 3) {
+      html += `<span style="padding:0 4px;color:#bbb">…</span>`;
+    }
+  }
+  html += `<button class="page-btn" onclick="goPage(${currentPage + 1})" ${currentPage === total ? 'disabled' : ''}>Next ›</button>`;
+  pg.innerHTML = html;
+}
+
+function goPage(p) {
+  const total = Math.ceil(filtered.length / PAGE_SIZE);
+  currentPage = Math.max(1, Math.min(p, total));
+  renderTable();
+  renderPagination();
+  document.getElementById('mainTable')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ========== CALENDAR VIEW ==========
+function renderCalendar() {
+  const stateF = document.getElementById('calStateFilter')?.value || '';
+  const byMonth = {};
+  officials.forEach((o, idx) => {
+    if (!o.dob) return;
+    if (stateF && o.state !== stateF) return;
+    const d = new Date(o.dob);
+    const m = d.getMonth();
+    if (!byMonth[m]) byMonth[m] = [];
+    byMonth[m].push({ ...o, idx });
+  });
+
+  const months = Object.keys(byMonth).map(Number).sort((a,b) => a-b);
+  const content = document.getElementById('calendarContent');
+  if (!content) return;
+  if (months.length === 0) { content.innerHTML = '<div class="empty-state"><div class="icon">📅</div><p>No birthday data available</p></div>'; return; }
+
+  const t = today();
+  content.innerHTML = months.map(m => {
+    const list = byMonth[m].sort((a,b) => new Date(a.dob).getDate() - new Date(b.dob).getDate());
+    return `
+      <div class="month-section">
+        <div class="month-header">
+          ${m === t.getMonth() ? '📍 ' : ''}${monthName(m)} <span class="cnt">${list.length} birthday${list.length > 1 ? 's' : ''}</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Name</th><th>Post</th><th>State</th><th>Age</th><th>Mobile</th><th>Action</th></tr></thead>
+            <tbody>
+              ${list.map(o => {
+                const d = new Date(o.dob);
+                const isToday = d.getMonth() === t.getMonth() && d.getDate() === t.getDate();
+                return `<tr ${isToday ? 'style="background:#fff9ed"' : ''}>
+                  <td><strong>${d.getDate()} ${monthName(m).slice(0,3)}</strong>${isToday ? ' 🎂' : ''}</td>
+                  <td class="td-name">${escHtml(o.name)}</td>
+                  <td class="td-post" style="font-size:11px">${escHtml(o.post)}</td>
+                  <td><span class="state-pill pill-${stateShort(o.state)}">${stateShort(o.state)}</span></td>
+                  <td class="td-age">${calcAge(o.dob)}y</td>
+                  <td class="td-mobile">${o.mobile ? `<a href="tel:+91${o.mobile}">${o.mobile}</a>` : '—'}</td>
+                  <td>${o.mobile ? `<button class="whatsapp-icon-btn" onclick="openWa(${o.idx})">💬</button>` : ''}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ========== GIFTS TAB ==========
+function renderGifts() {
+  const sent = officials.filter(o => o.giftSent);
+  const pending = officials.filter(o => !o.giftSent && o.dob && daysToNextBirthday(o.dob) <= 30 && daysToNextBirthday(o.dob) >= 0);
+  const content = document.getElementById('giftsContent');
+  if (!content) return;
+
+  content.innerHTML = `
+    <div class="stat-grid" style="margin-bottom:28px">
+      <div class="stat-card green"><div class="stat-num">${sent.length}</div><div class="stat-label">Gifts Sent</div></div>
+      <div class="stat-card orange"><div class="stat-num">${pending.length}</div><div class="stat-label">Action Needed (30 days)</div></div>
+      <div class="stat-card blue"><div class="stat-num">${officials.length - sent.length}</div><div class="stat-label">Total Pending</div></div>
+    </div>
+
+    ${pending.length > 0 ? `
+    <div class="section-title">⚡ Action Required — Upcoming Birthdays (Next 30 Days)</div>
+    <div class="table-wrap" style="margin-bottom:32px">
+      <table>
+        <thead><tr><th>Days</th><th>Name</th><th>Post</th><th>State</th><th>Mobile</th><th>Gift Status</th><th>Gift Note</th><th>Action</th></tr></thead>
+        <tbody>
+          ${pending.sort((a,b)=>daysToNextBirthday(a.dob)-daysToNextBirthday(b.dob)).map(o => {
+            const idx = officials.indexOf(o);
+            const days = daysToNextBirthday(o.dob);
+            return `<tr>
+              <td><span class="days-tag ${days===0?'today':days<=7?'urgent':'soon'}">${days===0?'TODAY':days+'d'}</span></td>
+              <td class="td-name">${escHtml(o.name)}</td>
+              <td class="td-post" style="font-size:11px">${escHtml(o.post)}</td>
+              <td><span class="state-pill pill-${stateShort(o.state)}">${stateShort(o.state)}</span></td>
+              <td class="td-mobile">${o.mobile ? `<a href="tel:+91${o.mobile}">${o.mobile}</a>` : '—'}</td>
+              <td><button class="gift-toggle" onclick="toggleGift(${idx})">○ Mark Sent</button></td>
+              <td><span style="font-size:11px;color:#aaa">${escHtml(o.giftNote || '—')}</span></td>
+              <td>${o.mobile ? `<button class="whatsapp-icon-btn" onclick="openWa(${idx})">💬</button>` : ''}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>` : ''}
+
+    <div class="section-title">✅ Gifts Sent <span class="badge">${sent.length} OFFICIALS</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Post</th><th>State</th><th>DOB</th><th>Note</th><th>Action</th></tr></thead>
+        <tbody>
+          ${sent.length === 0 ? '<tr><td colspan="6"><div class="empty-state"><div class="icon">🎁</div><p>No gifts marked as sent yet</p></div></td></tr>' :
+          sent.map(o => {
+            const idx = officials.indexOf(o);
+            return `<tr>
+              <td class="td-name">${escHtml(o.name)}</td>
+              <td class="td-post" style="font-size:11px">${escHtml(o.post)}</td>
+              <td><span class="state-pill pill-${stateShort(o.state)}">${stateShort(o.state)}</span></td>
+              <td class="td-dob">${formatDob(o.dob)}</td>
+              <td style="font-size:12px">${escHtml(o.giftNote || '—')}</td>
+              <td><button class="btn btn-danger btn-sm" onclick="toggleGift(${idx})">Undo</button></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ========== GIFT TOGGLE ==========
+function toggleGift(idx) {
+  officials[idx].giftSent = !officials[idx].giftSent;
+  save();
+  showToast(officials[idx].giftSent ? '✅ Gift marked as sent!' : 'Gift status cleared', officials[idx].giftSent ? 'success' : '');
+  renderTable();
+  renderDashboard();
+  renderGifts();
+}
+
+// ========== WHATSAPP ==========
+function openWa(idx) {
+  const o = officials[idx];
+  if (!o.mobile) return;
+  const age = calcAge(o.dob);
+  const nextAge = age ? age + 1 : '';
+  
+  const first = o.name.replace(/^(Shri|Shri\.|Dr\.|Dr|Smt|Smti|Smti\.|Mrs\.|Mr\.|Ms\.|Sri)\s+/i, '').split(',')[0];
+  const msg = `🎂 *Warm Birthday Greetings!*\n\nDear ${o.name},\n\nOn behalf of State Bank of India, LHO Guwahati, I extend our warmest birthday wishes to you on this special occasion.${nextAge ? ` May this ${nextAge}th birthday bring you joy, good health and continued success.` : ''}\n\nYour dedicated service to the nation is truly inspiring. We look forward to continued cooperation and goodwill.\n\nWith regards,\n*Biswajit Bhattacharjee*\nChief Manager (Liaison)\nSBI LHO, Guwahati`;
+  
+  const waUrl = `https://wa.me/91${o.mobile}?text=${encodeURIComponent(msg.replace(/\n/g,'\n'))}`;
+  
+  document.getElementById('waContent').innerHTML = `
+    <p style="font-size:13px;color:#888;margin-bottom:10px">Preview of WhatsApp message for <strong>${escHtml(o.name)}</strong></p>
+    <div class="wa-template">🎂 <strong>Warm Birthday Greetings!</strong>
+
+Dear ${escHtml(o.name)},
+
+On behalf of State Bank of India, LHO Guwahati, I extend our warmest birthday wishes to you on this special occasion.${nextAge ? ` May this ${nextAge}th birthday bring you joy, good health and continued success.` : ''}
+
+Your dedicated service to the nation is truly inspiring. We look forward to continued cooperation and goodwill.
+
+With regards,
+<strong>Biswajit Bhattacharjee</strong>
+Chief Manager (Liaison)
+SBI LHO, Guwahati</div>
+    <p style="font-size:12px;color:#aaa">📱 Mobile: +91 ${o.mobile}</p>
+  `;
+  document.getElementById('waOpenBtn').onclick = () => { window.open(waUrl, '_blank'); closeWaModal(); };
+  document.getElementById('waModal').classList.add('open');
+}
+function closeWaModal() { document.getElementById('waModal').classList.remove('open'); }
+
+// ========== ADD/EDIT MODAL ==========
+function openAddModal() {
+  document.getElementById('modalTitle').textContent = 'Add New Official';
+  document.getElementById('modalSubtitle').textContent = 'Fill in the details to add a new entry';
+  document.getElementById('editIdx').value = '';
+  document.getElementById('fName').value = '';
+  document.getElementById('fPost').value = '';
+  document.getElementById('fMobile').value = '';
+  document.getElementById('fDob').value = '';
+  document.getElementById('fState').value = 'ASSAM';
+  document.getElementById('fDomicile').value = '';
+  document.getElementById('fEducation').value = '';
+  document.getElementById('fGiftNote').value = '';
+  document.getElementById('deleteBtn').classList.add('hidden');
+  document.getElementById('officialModal').classList.add('open');
+}
+
+function openEditModal(idx) {
+  const o = officials[idx];
+  document.getElementById('modalTitle').textContent = 'Edit Official';
+  document.getElementById('modalSubtitle').textContent = escHtml(o.name);
+  document.getElementById('editIdx').value = idx;
+  document.getElementById('fName').value = o.name;
+  document.getElementById('fPost').value = o.post;
+  document.getElementById('fMobile').value = o.mobile || '';
+  document.getElementById('fDob').value = o.dob || '';
+  document.getElementById('fState').value = o.state || 'ASSAM';
+  document.getElementById('fDomicile').value = o.domicile || '';
+  document.getElementById('fEducation').value = o.education || '';
+  document.getElementById('fGiftNote').value = o.giftNote || '';
+  document.getElementById('deleteBtn').classList.remove('hidden');
+  document.getElementById('officialModal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('officialModal').classList.remove('open'); }
+
+function saveOfficial() {
+  const name = document.getElementById('fName').value.trim();
+  const post = document.getElementById('fPost').value.trim();
+  if (!name) { showToast('Please enter the official\'s name', 'error'); return; }
+  
+  const data = {
+    name,
+    post,
+    mobile: document.getElementById('fMobile').value.replace(/[^0-9]/g,'').slice(-10),
+    dob: document.getElementById('fDob').value || '',
+    state: document.getElementById('fState').value,
+    domicile: document.getElementById('fDomicile').value.trim(),
+    education: document.getElementById('fEducation').value.trim(),
+    giftNote: document.getElementById('fGiftNote').value.trim(),
+    giftSent: false
+  };
+
+  const idx = document.getElementById('editIdx').value;
+  if (idx !== '') {
+    data.giftSent = officials[parseInt(idx)].giftSent;
+    officials[parseInt(idx)] = data;
+    showToast('Official updated!', 'success');
+  } else {
+    officials.push(data);
+    showToast('Official added!', 'success');
+  }
+  save();
+  closeModal();
+  applyFilters();
+  renderDashboard();
+  renderCalendar();
+  renderGifts();
+}
+
+function deleteOfficial() {
+  const idx = parseInt(document.getElementById('editIdx').value);
+  if (!confirm(`Delete "${officials[idx].name}"? This cannot be undone.`)) return;
+  officials.splice(idx, 1);
+  save();
+  closeModal();
+  applyFilters();
+  renderDashboard();
+  renderCalendar();
+  renderGifts();
+  showToast('Official deleted');
+}
+
+// ========== IMPORT/EXPORT ==========
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(officials, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ne_officials_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+
+function exportCSV() {
+  const headers = ['Name','Post','State','Mobile','DOB','Domicile','Education','Gift Sent','Gift Note'];
+  const rows = officials.map(o => [
+    o.name, o.post, o.state, o.mobile, o.dob, o.domicile, o.education,
+    o.giftSent ? 'Yes' : 'No', o.giftNote
+  ].map(v => `"${(v||'').replace(/"/g,'""')}"`));
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ne_officials_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('CSV downloaded!', 'success');
+}
+
+function resetToOriginal() {
+  if (!confirm('This will reset all data to the original dataset. All your changes, added officials and gift tracking will be lost. Are you sure?')) return;
+  officials = JSON.parse(JSON.stringify(ORIGINAL_DATA));
+  save();
+  applyFilters();
+  renderDashboard();
+  renderCalendar();
+  renderGifts();
+  showToast('Data reset to original', '');
+}
+
+function handleXlsxImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  document.getElementById('importResult').innerHTML = '<p style="color:#888">📂 Reading file...</p>';
+  // For xlsx import, we show instructions since SheetJS is not loaded
+  document.getElementById('importResult').innerHTML = `
+    <div style="background:#fff9ed;border:1px solid #f0c040;border-radius:10px;padding:16px;font-size:13px">
+      <strong>📌 How to import from Excel:</strong><br><br>
+      1. Open your Excel file<br>
+      2. Make sure columns are: A=Name, B=Post, C=Mobile, D=DOB (date), H=STATE<br>
+      3. Save as CSV (Comma Separated Values)<br>
+      4. Click "Add Official" to manually add officials, or share the file and Claude will update the app with new data.<br><br>
+      <em>Auto Excel import requires the SheetJS library. Contact your developer to enable this feature.</em>
+    </div>
+  `;
+}
+
+// ========== TAB NAVIGATION ==========
+function showTab(tab) {
+  currentTab = tab;
+  ['dashboard','database','calendar','gifts','import'].forEach(t => {
+    document.getElementById('tab-content-' + t).classList.toggle('hidden', t !== tab);
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'database') applyFilters();
+  if (tab === 'calendar') renderCalendar();
+  if (tab === 'gifts') renderGifts();
+}
+
+// ========== TOAST ==========
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+// ========== UTILITY ==========
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Close modals on overlay click
+document.getElementById('officialModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+document.getElementById('waModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeWaModal(); });
+
+// ESC key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeWaModal(); }
+});
+
+
+// ========== QUICK-EDIT PANEL ==========
+function openQePanel(idx) {
+  const o = officials[idx];
+  document.getElementById('qeIdx').value = idx;
+  document.getElementById('qePanelTitle').textContent = o.name;
+  document.getElementById('qePanelSub').textContent = (o.state || '') + ' • QUICK CORRECTION PANEL';
+
+  document.getElementById('qeName').value = o.name || '';
+  document.getElementById('qeState').value = o.state || 'ASSAM';
+  document.getElementById('qePost').value = o.post || '';
+  document.getElementById('qeDomicile').value = o.domicile || '';
+  document.getElementById('qeEducation').value = o.education || '';
+  document.getElementById('qeMobile').value = o.mobile || '';
+  document.getElementById('qeDob').value = o.dob || '';
+  document.getElementById('qeGiftSent').value = o.giftSent ? 'true' : 'false';
+  document.getElementById('qeGiftNote').value = o.giftNote || '';
+
+  // Flag missing fields
+  document.getElementById('qeMobileFlag').innerHTML = !o.mobile ? '<span class="flag-missing">⚠ Missing</span>' : '';
+  document.getElementById('qeDobFlag').innerHTML = !o.dob ? '<span class="flag-missing">⚠ Missing</span>' : '';
+
+  // Highlight the row
+  document.querySelectorAll('tr.editing-row').forEach(r => r.classList.remove('editing-row'));
+  const rows = document.querySelectorAll('#tableBody tr');
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const posInPage = filtered.indexOf(o) - start;
+  if (posInPage >= 0 && posInPage < rows.length) rows[posInPage].classList.add('editing-row');
+
+  document.getElementById('qeOverlay').classList.add('open');
+  document.getElementById('qePanel').classList.add('open');
+  setTimeout(() => document.getElementById('qeName').focus(), 350);
+}
+
+function closeQePanel() {
+  document.getElementById('qeOverlay').classList.remove('open');
+  document.getElementById('qePanel').classList.remove('open');
+  document.querySelectorAll('tr.editing-row').forEach(r => r.classList.remove('editing-row'));
+}
+
+function saveFromQe() {
+  const idx = parseInt(document.getElementById('qeIdx').value);
+  const name = document.getElementById('qeName').value.trim();
+  if (!name) { showToast('Name cannot be empty', 'error'); document.getElementById('qeName').focus(); return; }
+
+  const rawMob = document.getElementById('qeMobile').value.replace(/[^0-9]/g,'');
+  const mobile = rawMob.length >= 10 ? rawMob.slice(-10) : rawMob;
+
+  officials[idx] = {
+    ...officials[idx],
+    name,
+    state: document.getElementById('qeState').value,
+    post: document.getElementById('qePost').value.trim(),
+    domicile: document.getElementById('qeDomicile').value.trim(),
+    education: document.getElementById('qeEducation').value.trim(),
+    mobile,
+    dob: document.getElementById('qeDob').value || '',
+    giftSent: document.getElementById('qeGiftSent').value === 'true',
+    giftNote: document.getElementById('qeGiftNote').value.trim(),
+  };
+
+  // update missing flags live
+  document.getElementById('qeMobileFlag').innerHTML = !mobile ? '<span class="flag-missing">⚠ Missing</span>' : '';
+  document.getElementById('qeDobFlag').innerHTML = !officials[idx].dob ? '<span class="flag-missing">⚠ Missing</span>' : '';
+  document.getElementById('qePanelTitle').textContent = name;
+
+  save();
+  showToast('✅ ' + name + ' updated!', 'success');
+  applyFilters();
+  renderDashboard();
+  renderCalendar();
+  renderGifts();
+  closeQePanel();
+}
+
+function deleteFromQe() {
+  const idx = parseInt(document.getElementById('qeIdx').value);
+  const name = officials[idx].name;
+  if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+  officials.splice(idx, 1);
+  save();
+  closeQePanel();
+  applyFilters();
+  renderDashboard();
+  renderCalendar();
+  renderGifts();
+  showToast('Official deleted');
+}
+
+// ========== START ==========
+init();
+</script>
+
+<footer style="background:var(--ink);color:rgba(255,255,255,0.45);text-align:center;padding:22px 16px;font-size:12px;letter-spacing:0.4px;margin-top:40px">
+  <div style="max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap">
+    <span style="color:var(--gold);font-size:15px">&#10022;</span>
+    <span>Designed &amp; developed by</span>
+    <strong style="color:rgba(255,255,255,0.85);font-size:13px">Biswajit Bhattacharjee</strong>
+    <span style="color:rgba(255,255,255,0.25)">|</span>
+    <span>Chief Manager (Liaison), SBI LHO Guwahati</span>
+    <span style="color:rgba(255,255,255,0.25)">|</span>
+    <span>NE IAS Officials Tracker v1.0</span>
+    <span style="color:var(--gold);font-size:15px">&#10022;</span>
+  </div>
+</footer>
+</body>
+</html>
