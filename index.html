@@ -37,36 +37,102 @@ body {
 
 /* HEADER */
 .app-header {
-  background: linear-gradient(135deg, var(--ink) 0%, var(--ink2) 100%);
+  background: linear-gradient(135deg, var(--ink) 0%, #16213e 60%, #0f3460 100%);
   color: white;
   padding: 0;
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: var(--shadow-lg);
+  border-bottom: 1px solid rgba(201,168,76,0.15);
 }
 .header-inner {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 18px 32px;
+  padding: 14px 32px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 0;
+}
+.header-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-right: 28px;
+  border-right: 1px solid rgba(255,255,255,0.12);
+  margin-right: 24px;
+  flex-shrink: 0;
 }
 .header-logo {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  letter-spacing: 0.3px;
   line-height: 1;
 }
 .header-logo span { color: var(--gold); }
 .header-subtitle {
-  font-size: 11px;
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  font-weight: 500;
+}
+.header-live {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.header-greeting {
+  font-size: 10px;
+  font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1;
+}
+.header-dateline {
+  font-size: 12px;
   color: rgba(255,255,255,0.55);
-  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+.header-clock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 13px;
+  margin-right: 16px;
+  background: rgba(201,168,76,0.10);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 12px;
+  box-shadow: 0 0 14px rgba(201,168,76,0.18), inset 0 0 12px rgba(201,168,76,0.06);
+  position: relative;
+}
+.header-clock::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: 0 0 18px rgba(201,168,76,0.22);
+  pointer-events: none;
+}
+.header-clock-time {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--gold-light);
+  letter-spacing: 4px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 12px rgba(201,168,76,0.6), 0 0 24px rgba(201,168,76,0.3);
+}
+.header-clock-date {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 2px;
 }
 .header-right {
   margin-left: auto;
@@ -836,6 +902,496 @@ td {
   .state-tab-grid { grid-template-columns: 1fr; }
 }
 
+
+
+/* ===== ADMIN PIN SYSTEM ===== */
+.admin-lock-btn {
+  background: rgba(255,255,255,0.10);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.7);
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.admin-lock-btn:hover { background: rgba(255,255,255,0.18); color: white; }
+.admin-lock-btn.unlocked {
+  background: rgba(201,168,76,0.2);
+  border-color: rgba(201,168,76,0.5);
+  color: var(--gold-light);
+}
+.admin-lock-btn .lock-icon { font-size: 14px; }
+
+.pin-overlay {
+  position: fixed; inset: 0;
+  background: rgba(20,20,40,0.7);
+  display: none; align-items: center; justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(6px);
+}
+.pin-overlay.open { display: flex; }
+.pin-box {
+  background: white;
+  border-radius: 24px;
+  padding: 40px 36px;
+  width: 340px;
+  box-shadow: 0 20px 60px rgba(20,20,40,0.35);
+  text-align: center;
+}
+.pin-box-icon { font-size: 40px; margin-bottom: 12px; }
+.pin-box-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px; font-weight: 700;
+  color: var(--ink); margin-bottom: 4px;
+}
+.pin-box-sub { font-size: 13px; color: #888; margin-bottom: 24px; }
+.pin-dots {
+  display: flex; gap: 12px; justify-content: center; margin-bottom: 24px;
+}
+.pin-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: white;
+  transition: all 0.15s;
+}
+.pin-dot.filled { background: var(--ink); border-color: var(--ink); }
+.pin-dot.error  { background: var(--red); border-color: var(--red); animation: shake 0.3s; }
+@keyframes shake {
+  0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
+}
+.pin-keypad {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin-bottom: 16px;
+}
+.pin-key {
+  height: 52px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.12s;
+  display: flex; align-items: center; justify-content: center;
+}
+.pin-key:hover { background: var(--gold-pale); border-color: var(--gold); }
+.pin-key:active { transform: scale(0.94); }
+.pin-key.del { font-size: 16px; color: #888; }
+.pin-key.zero { grid-column: 2; }
+.pin-error-msg { font-size: 12px; color: var(--red); font-weight: 600; min-height: 18px; }
+.pin-cancel-btn {
+  background: none; border: none; color: #aaa; font-size: 13px;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; margin-top: 10px;
+  text-decoration: underline;
+}
+
+/* View-only banner */
+.view-only-banner {
+  background: linear-gradient(90deg, #f0f4ff, #e8edff);
+  border-bottom: 1px solid #c0ccff;
+  padding: 8px 32px;
+  font-size: 12px;
+  color: #4466bb;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+.view-only-banner.hidden { display: none !important; }
+
+/* Admin-only elements hidden for viewers */
+body.view-mode .admin-only { display: none !important; }
+body.view-mode .admin-only-cell { opacity: 0.25; pointer-events: none; }
+
+/* ===== PREMIUM DASHBOARD ===== */
+
+
+/* KPI CARDS */
+.db-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.db-kpi {
+  background: white;
+  border-radius: 16px;
+  padding: 18px 16px 14px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.db-kpi:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.db-kpi-accent {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 16px 16px 0 0;
+}
+.db-kpi-icon {
+  font-size: 22px;
+  margin-bottom: 10px;
+  display: block;
+}
+.db-kpi-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.db-kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #aaa;
+  margin-bottom: 2px;
+}
+.db-kpi-sub {
+  font-size: 11px;
+  color: #bbb;
+}
+.db-kpi-pulse {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.4); }
+}
+
+/* TODAY ALERT */
+.db-today-alert {
+  background: linear-gradient(135deg, #fff9ed, #fffbf0);
+  border: 1.5px solid var(--gold);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.db-today-alert::before {
+  content: '🎂';
+  position: absolute;
+  right: 20px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 48px;
+  opacity: 0.12;
+}
+.db-alert-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.db-alert-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.db-alert-chip {
+  background: white;
+  border: 1px solid rgba(201,168,76,0.4);
+  border-radius: 12px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 10px rgba(201,168,76,0.1);
+  min-width: 240px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.db-alert-chip:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(201,168,76,0.2); }
+.db-alert-avatar {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--ink), #2d2d4e);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-weight: 700;
+  color: rgba(255,255,255,0.6);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.db-alert-avatar img { width:100%; height:100%; object-fit:cover; border-radius:9px; }
+.db-alert-name { font-weight: 700; font-size: 13px; color: var(--ink); }
+.db-alert-info { font-size: 11px; color: #888; margin-top: 1px; }
+
+/* MAIN GRID */
+.db-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+  align-items: start;
+}
+.db-col-left, .db-col-right { display: flex; flex-direction: column; gap: 20px; }
+
+/* PANELS */
+.db-panel {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.db-panel-header {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid #f5f0e8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.db-panel-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.db-panel-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: var(--gold-pale);
+  color: #8a6a10;
+  border: 1px solid rgba(201,168,76,0.3);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* STATE BARS */
+.db-state-bars { padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+.db-state-bar-item {}
+.db-state-bar-top {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.db-state-bar-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.db-state-bar-count { font-size: 12px; color: #888; }
+.db-state-bar-track {
+  height: 8px; background: #f5f0e8; border-radius: 4px; overflow: hidden;
+}
+.db-state-bar-fill {
+  height: 100%; border-radius: 4px;
+  transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+}
+.db-state-bar-meta {
+  display: flex; gap: 16px; margin-top: 5px;
+}
+.db-state-bar-meta span { font-size: 10px; color: #bbb; }
+.db-state-bar-meta strong { color: #888; }
+
+/* PIPELINE GRID */
+.db-pipeline-grid {
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.db-pipe-cell {
+  text-align: center;
+  padding: 14px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.db-pipe-cell:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.db-pipe-cell.red   { background: #fff5f5; border-color: #ffcccc; }
+.db-pipe-cell.orange{ background: #fff8ed; border-color: #ffe0b2; }
+.db-pipe-cell.blue  { background: #f0f8ff; border-color: #b3d9ff; }
+.db-pipe-cell.green { background: #f0faf5; border-color: #b3e8cc; }
+.db-pipe-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 700;
+  line-height: 1; margin-bottom: 4px;
+}
+.db-pipe-cell.red .db-pipe-num   { color: var(--red); }
+.db-pipe-cell.orange .db-pipe-num{ color: var(--orange); }
+.db-pipe-cell.blue .db-pipe-num  { color: var(--blue); }
+.db-pipe-cell.green .db-pipe-num { color: var(--green); }
+.db-pipe-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #aaa; line-height: 1.3; }
+
+/* UPCOMING LIST in dashboard */
+.db-upcoming-item {
+  padding: 13px 20px;
+  border-bottom: 1px solid #f8f4ee;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.db-upcoming-item:last-child { border-bottom: none; }
+.db-upcoming-item:hover { background: var(--gold-pale); }
+.db-countdown {
+  min-width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.db-countdown.today  { background: #fff0f0; border: 1.5px solid #ffaaaa; }
+.db-countdown.urgent { background: #fff8ed; border: 1.5px solid #ffcc80; }
+.db-countdown.soon   { background: #edf5ff; border: 1.5px solid #90c0ff; }
+.db-countdown.normal { background: #f5f5f5; border: 1.5px solid #e0e0e0; }
+.db-countdown-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 700; line-height: 1;
+}
+.db-countdown.today .db-countdown-num  { color: var(--red); }
+.db-countdown.urgent .db-countdown-num { color: var(--orange); }
+.db-countdown.soon .db-countdown-num   { color: var(--blue); }
+.db-countdown.normal .db-countdown-num { color: #888; }
+.db-countdown-lbl { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #aaa; }
+.db-upcoming-avatar {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--ink), #2d2d4e);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-weight: 700;
+  color: rgba(255,255,255,0.6);
+  overflow: hidden;
+}
+.db-upcoming-avatar img { width:100%; height:100%; object-fit:cover; border-radius:8px; }
+.db-upcoming-name { font-weight: 600; font-size: 13px; color: var(--ink); line-height: 1.3; }
+.db-upcoming-post { font-size: 11px; color: #888; margin-top: 1px; overflow: hidden;
+  white-space: nowrap; text-overflow: ellipsis; max-width: 300px; }
+.db-upcoming-meta { display: flex; gap: 6px; align-items: center; margin-top: 4px; flex-wrap: wrap; }
+.db-wa-mini {
+  background: #25D366; color: white; border: none; border-radius: 5px;
+  padding: 2px 8px; font-size: 10px; font-weight: 700; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; margin-left: auto; flex-shrink: 0;
+}
+.db-dob-tag { font-size: 10px; color: #bbb; }
+
+/* WEEK LIST */
+.db-week-item {
+  padding: 11px 20px;
+  border-bottom: 1px solid #f8f4ee;
+  display: flex; gap: 10px; align-items: center;
+  cursor: pointer; transition: background 0.12s;
+}
+.db-week-item:last-child { border-bottom: none; }
+.db-week-item:hover { background: var(--gold-pale); }
+.db-week-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.db-week-name { font-weight: 600; font-size: 12.5px; color: var(--ink); }
+.db-week-sub  { font-size: 11px; color: #aaa; }
+.db-week-days {
+  margin-left: auto; flex-shrink: 0;
+  font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 5px;
+}
+
+/* MEMENTO SUMMARY */
+.db-memento-wrap { padding: 16px 20px; }
+.db-memento-bar-track {
+  height: 12px; background: #f0ece4; border-radius: 6px; overflow: hidden; margin: 10px 0;
+}
+.db-memento-bar-fill {
+  height: 100%; border-radius: 6px;
+  background: linear-gradient(90deg, var(--green), #52c41a);
+  transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+}
+.db-memento-stats { display: flex; justify-content: space-between; font-size: 12px; }
+.db-memento-stat { text-align: center; }
+.db-memento-stat-num { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 700; color: var(--ink); line-height: 1; }
+.db-memento-stat-lbl { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+
+/* MONTH HEATMAP */
+.db-month-heatmap {
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.db-month-cell {
+  border-radius: 8px;
+  padding: 8px 4px;
+  text-align: center;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+.db-month-cell:hover { transform: scale(1.05); box-shadow: var(--shadow); }
+.db-month-cell.current-month { border-color: var(--gold); border-width: 1.5px; }
+.db-month-name { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #aaa; }
+.db-month-count { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700; color: var(--ink); line-height: 1.1; }
+.db-month-cell.has-0 { background: #fafafa; }
+.db-month-cell.has-low { background: #e8f5ff; }
+.db-month-cell.has-mid { background: #b3d9ff; }
+.db-month-cell.has-high { background: #5baaf5; }
+.db-month-cell.has-high .db-month-count { color: white; }
+.db-month-cell.has-high .db-month-name { color: rgba(255,255,255,0.7); }
+
+/* QUICK ACTIONS */
+.db-quick-actions {
+  padding: 14px 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.db-action-btn {
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+  text-align: left;
+}
+.db-action-btn:hover { border-color: var(--gold); background: var(--gold-pale); }
+.db-action-btn.accent {
+  background: var(--ink); color: white; border-color: var(--ink);
+  grid-column: span 2;
+  text-align: center;
+}
+.db-action-btn.accent:hover { background: var(--ink2); }
+
+.db-empty { padding: 20px; text-align: center; color: #bbb; font-size: 13px; }
+
+@media (max-width: 1100px) {
+  .db-main-grid { grid-template-columns: 1fr; }
+  .db-kpi-row { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .db-hero { flex-direction: column; gap: 16px; text-align: center; padding: 20px; }
+  .db-clock { text-align: center; font-size: 28px; }
+  .db-clock-sub { text-align: center; }
+  .db-kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .db-pipeline-grid { grid-template-columns: repeat(2, 1fr); }
+  .db-month-heatmap { grid-template-columns: repeat(4, 1fr); }
+}
+
 /* ===== PROFILE CARD MODAL ===== */
 .profile-overlay {
   position: fixed; inset: 0;
@@ -1231,7 +1787,11 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
 
 /* Responsive */
 @media (max-width: 768px) {
-  .header-inner { padding: 14px 16px; flex-wrap: wrap; }
+  .header-inner { padding: 10px 16px; gap: 0; flex-wrap: wrap; }
+  .header-brand { padding-right: 16px; margin-right: 16px; }
+  .header-live { display: none; }
+  .header-clock { padding: 6px 12px; margin-right: 8px; }
+  .header-clock-time { font-size: 15px; letter-spacing: 3px; }
   .main { padding: 16px; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .form-grid { grid-template-columns: 1fr; }
@@ -1273,13 +1833,23 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
 
 <header class="app-header">
   <div class="header-inner">
-    <div>
+    <div class="header-brand">
       <div class="header-logo">NE IAS Officials <span>Tracker</span></div>
       <div class="header-subtitle">Birthday &amp; Memento Management • Northeast India</div>
     </div>
+    <div class="header-live">
+      <div class="header-greeting" id="headerGreeting">Good Morning</div>
+      <div class="header-dateline" id="headerDateline">Loading...</div>
+    </div>
+    <div class="header-clock">
+      <div class="header-clock-time" id="headerClock">00:00:00</div>
+    </div>
     <div class="header-right">
-      <div class="today-badge" id="todayBadge">Loading...</div>
-      <button class="btn btn-gold btn-sm" onclick="openAddModal()">+ Add Official</button>
+      <button class="admin-lock-btn" id="adminLockBtn" onclick="toggleAdminLock()" title="Admin access">
+        <span class="lock-icon" id="lockIcon">🔒</span>
+        <span id="lockLabel">Admin Login</span>
+      </button>
+      <button class="btn btn-gold btn-sm admin-only" onclick="openAddModal()">+ Add Official</button>
     </div>
   </div>
 </header>
@@ -1307,6 +1877,38 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
   </div>
 </div>
 
+<!-- ADMIN PIN OVERLAY -->
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-box">
+    <div class="pin-box-icon">🔐</div>
+    <div class="pin-box-title">Admin Access</div>
+    <div class="pin-box-sub" id="pinBoxSub">Enter 4-digit Admin PIN to unlock editing</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinPress(1)">1</button>
+      <button class="pin-key" onclick="pinPress(2)">2</button>
+      <button class="pin-key" onclick="pinPress(3)">3</button>
+      <button class="pin-key" onclick="pinPress(4)">4</button>
+      <button class="pin-key" onclick="pinPress(5)">5</button>
+      <button class="pin-key" onclick="pinPress(6)">6</button>
+      <button class="pin-key" onclick="pinPress(7)">7</button>
+      <button class="pin-key" onclick="pinPress(8)">8</button>
+      <button class="pin-key" onclick="pinPress(9)">9</button>
+      <button class="pin-key del" onclick="pinDel()">⌫</button>
+      <button class="pin-key zero" onclick="pinPress(0)">0</button>
+      <button class="pin-key del" onclick="pinClear()">✕</button>
+    </div>
+    <div class="pin-error-msg" id="pinError"></div>
+    <button class="pin-cancel-btn" onclick="closePinOverlay()">Cancel — continue as viewer</button>
+  </div>
+</div>
+
+<div class="view-only-banner" id="viewOnlyBanner">👁 View-only mode — editing disabled. <a href="#" onclick="openPinOverlay();return false;" style="color:#3355cc;font-weight:700;margin-left:6px">Admin Login →</a></div>
 <nav class="nav-tabs">
   <div class="nav-inner">
     <div class="nav-tab active" onclick="showTab('dashboard')" id="tab-dashboard">📊 Dashboard</div>
@@ -1322,9 +1924,93 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
 
   <!-- DASHBOARD TAB -->
   <div id="tab-content-dashboard">
-    <div class="stat-grid" id="statGrid"></div>
-    <div class="birthday-banner" id="todayBanner"></div>
-    <div id="upcomingSection"></div>
+
+    <!-- HERO COMMAND BAR -->
+    <!-- KPI CARDS ROW -->
+    <div class="db-kpi-row" id="dbKpiRow"></div>
+
+    <!-- TODAY ALERT -->
+    <div class="db-today-alert hidden" id="dbTodayAlert"></div>
+
+    <!-- MAIN GRID: LEFT = upcoming + chart | RIGHT = this week + quick actions -->
+    <div class="db-main-grid">
+
+      <!-- LEFT COLUMN -->
+      <div class="db-col-left">
+
+        <!-- State coverage bar -->
+        <div class="db-panel">
+          <div class="db-panel-header">
+            <div class="db-panel-title">📍 State-wise Coverage</div>
+            <div class="db-panel-badge" id="dbStateBadge">3 States</div>
+          </div>
+          <div class="db-state-bars" id="dbStateBars"></div>
+        </div>
+
+        <!-- Birthday Donut + breakdown -->
+        <div class="db-panel">
+          <div class="db-panel-header">
+            <div class="db-panel-title">📅 Birthday Pipeline</div>
+            <div class="db-panel-badge" id="dbPipelineBadge"></div>
+          </div>
+          <div class="db-pipeline-grid" id="dbPipelineGrid"></div>
+        </div>
+
+        <!-- Upcoming 30 days -->
+        <div class="db-panel">
+          <div class="db-panel-header">
+            <div class="db-panel-title">🎂 Upcoming Birthdays</div>
+            <div class="db-panel-badge" id="dbUpcomingBadge">Next 30 days</div>
+          </div>
+          <div id="dbUpcomingList"></div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="db-col-right">
+
+        <!-- This week -->
+        <div class="db-panel">
+          <div class="db-panel-header">
+            <div class="db-panel-title">⚡ This Week</div>
+            <div class="db-panel-badge" id="dbWeekBadge">Next 7 days</div>
+          </div>
+          <div id="dbWeekList"></div>
+        </div>
+
+        <!-- Memento tracker summary -->
+        <div class="db-panel">
+          <div class="db-panel-header">
+            <div class="db-panel-title">🎁 Memento Tracker</div>
+          </div>
+          <div id="dbMementoSummary"></div>
+        </div>
+
+        <!-- Monthly heatmap -->
+        <div class="db-panel">
+          <div class="db-panel-header">
+            <div class="db-panel-title">📊 Monthly Birthday Distribution</div>
+          </div>
+          <div class="db-month-heatmap" id="dbMonthHeatmap"></div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="db-panel">
+          <div class="db-panel-header">
+            <div class="db-panel-title">⚙️ Quick Actions</div>
+          </div>
+          <div class="db-quick-actions">
+            <button class="db-action-btn" onclick="showTab('database')">📋 View All Officials</button>
+            <button class="db-action-btn" onclick="showTab('calendar')">📅 Birthday Calendar</button>
+            <button class="db-action-btn" onclick="showTab('statewise')">🗺 State-wise List</button>
+            <button class="db-action-btn" onclick="showTab('gifts')">🎁 Memento Tracker</button>
+            <button class="db-action-btn accent admin-only" onclick="showTab('import')">⬆️ Import / Add Officials</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <!-- DATABASE TAB -->
@@ -1409,7 +2095,7 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
     <div class="import-section">
       <h2>📥 Import New Officials</h2>
       <p>Upload an Excel file (.xlsx) to add more officials. Existing records will not be duplicated. Required columns: Name, Present Post, Mobile/Phone, DOB (Date of Birth), STATE.</p>
-      <div class="upload-area" onclick="document.getElementById('xlsxInput').click()">
+      <div class="upload-area admin-only" onclick="document.getElementById('xlsxInput').click()">
         <div class="upload-icon">📂</div>
         <div class="upload-text"><strong>Click to select Excel file</strong><br>or drag and drop your .xlsx here</div>
         <input type="file" id="xlsxInput" accept=".xlsx,.xls" style="display:none" onchange="handleXlsxImport(event)">
@@ -1431,7 +2117,7 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
     <div class="import-section">
       <h2>🗑️ Reset Database</h2>
       <p>This will clear all officials and restore the original dataset. Gift tracking notes will be lost.</p>
-      <button class="btn btn-danger" onclick="resetToOriginal()">⚠️ Reset to Original Data</button>
+      <button class="btn btn-danger admin-only" onclick="resetToOriginal()">⚠️ Reset to Original Data</button>
     </div>
   </div>
 
@@ -1516,7 +2202,7 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
 <div class="profile-overlay" id="profileOverlay" onclick="if(event.target===this)closeProfile()">
   <div class="profile-card" id="profileCard">
     <div class="pc-header">
-      <div class="pc-photo-wrap" onclick="document.getElementById('pcPhotoInput').click()" title="Click to upload photo">
+      <div class="pc-photo-wrap admin-only" onclick="document.getElementById('pcPhotoInput').click()" title="Click to upload photo">
         <div class="pc-photo" id="pcPhotoDisp">👤</div>
         <div class="pc-photo-upload-hint">📷</div>
         <input type="file" class="pc-photo-input" id="pcPhotoInput" accept="image/*" onchange="handlePhotoUpload(event)">
@@ -1546,7 +2232,7 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
       <div class="pc-section-title"><span class="icon">🎁</span> Memento / Gift Tracking</div>
       <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
         <div id="pcGiftStatus"></div>
-        <button class="btn btn-outline btn-sm" onclick="toggleGiftFromProfile()" id="pcGiftToggleBtn" style="font-size:12px"></button>
+        <button class="btn btn-outline btn-sm admin-only" onclick="toggleGiftFromProfile()" id="pcGiftToggleBtn" style="font-size:12px"></button>
       </div>
       <input type="text" id="pcGiftNote" placeholder="e.g. Assam silk tie sent via Blue Dart on 5 Jan 2025"
         style="width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s"
@@ -1555,8 +2241,8 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
       <!-- Action Buttons -->
       <div class="pc-actions">
         <button class="btn btn-outline" onclick="closeProfile()">Close</button>
-        <button class="btn btn-quick-edit" onclick="closeProfile();openQePanel(currentProfileIdx)" style="flex:1">✏️ Edit Details</button>
-        <button class="btn btn-gold" onclick="saveProfile()" style="flex:1.5">💾 Save Profile</button>
+        <button class="btn btn-quick-edit admin-only" onclick="closeProfile();openQePanel(currentProfileIdx)" style="flex:1">✏️ Edit Details</button>
+        <button class="btn btn-gold admin-only" onclick="saveProfile()" style="flex:1.5">💾 Save Profile</button>
         <button id="pcWaBtn" class="whatsapp-btn" style="padding:10px 16px;font-size:13px" onclick="openWaFromProfile()">💬 WhatsApp</button>
       </div>
 
@@ -1634,9 +2320,9 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
     <div style="height:8px"></div>
   </div>
   <div class="qe-footer">
-    <button class="btn btn-danger" style="flex:0 0 auto;padding:10px 14px;font-size:12px" onclick="deleteFromQe()">🗑 Delete</button>
+    <button class="btn btn-danger admin-only" style="flex:0 0 auto;padding:10px 14px;font-size:12px" onclick="deleteFromQe()">🗑 Delete</button>
     <button class="btn btn-outline" style="flex:1" onclick="closeQePanel()">Cancel</button>
-    <button class="btn btn-gold" style="flex:1.5" onclick="saveFromQe()">💾 Save Changes</button>
+    <button class="btn btn-gold admin-only" style="flex:1.5" onclick="saveFromQe()">💾 Save Changes</button>
   </div>
 </div>
 
@@ -1664,7 +2350,6 @@ function init() {
   } else {
     officials = JSON.parse(JSON.stringify(ORIGINAL_DATA));
   }
-  updateTodayBadge();
   applyFilters();
   renderDashboard();
   renderCalendar();
@@ -1715,113 +2400,258 @@ function stateShort(s) {
 }
 
 // ========== TODAY BADGE ==========
-function updateTodayBadge() {
-  const t = today();
-  document.getElementById('todayBadge').textContent = t.toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'long', year:'numeric'});
-}
+
 
 // ========== DASHBOARD ==========
 function renderDashboard() {
   const t = today();
   const withDob = officials.filter(o => o.dob);
   const todayBdays = withDob.filter(o => daysToNextBirthday(o.dob) === 0);
-  const next7 = withDob.filter(o => { const d = daysToNextBirthday(o.dob); return d > 0 && d <= 7; });
+  const next3  = withDob.filter(o => { const d = daysToNextBirthday(o.dob); return d > 0 && d <= 3; });
+  const next7  = withDob.filter(o => { const d = daysToNextBirthday(o.dob); return d > 0 && d <= 7; });
   const next30 = withDob.filter(o => { const d = daysToNextBirthday(o.dob); return d > 0 && d <= 30; });
   const giftsSent = officials.filter(o => o.giftSent).length;
-  const states = [...new Set(officials.map(o => o.state).filter(Boolean))].length;
+  const giftPending = officials.filter(o => !o.giftSent && o.dob && daysToNextBirthday(o.dob) <= 30 && daysToNextBirthday(o.dob) >= 0).length;
+  const states = [...new Set(officials.map(o => o.state).filter(Boolean))];
 
-  document.getElementById('statGrid').innerHTML = `
-    <div class="stat-card gold">
-      <div class="stat-num">${officials.length}</div>
-      <div class="stat-label">Total Officials</div>
-      <div class="stat-sub">${states} States/UTs</div>
-    </div>
-    <div class="stat-card green">
-      <div class="stat-num">${withDob.length}</div>
-      <div class="stat-label">With DOB</div>
-      <div class="stat-sub">${officials.length - withDob.length} missing</div>
-    </div>
-    <div class="stat-card red">
-      <div class="stat-num">${todayBdays.length}</div>
-      <div class="stat-label">Birthdays Today 🎂</div>
-      <div class="stat-sub">${next7.length} in next 7 days</div>
-    </div>
-    <div class="stat-card blue">
-      <div class="stat-num">${next30.length}</div>
-      <div class="stat-label">Upcoming (30 days)</div>
-      <div class="stat-sub">Needs attention</div>
-    </div>
-    <div class="stat-card orange">
-      <div class="stat-num">${giftsSent}</div>
-      <div class="stat-label">Gifts Sent</div>
-      <div class="stat-sub">${officials.length - giftsSent} pending</div>
-    </div>
-    <div class="stat-card gold">
-      <div class="stat-num">${officials.filter(o=>o.mobile).length}</div>
-      <div class="stat-label">With Mobile</div>
-      <div class="stat-sub">WhatsApp ready</div>
-    </div>
-  `;
+  // ── HERO greeting ──
+  const hr = t.getHours();
+  const greeting = hr < 12 ? 'Good Morning' : hr < 17 ? 'Good Afternoon' : 'Good Evening';
+  const el = document.getElementById('headerGreeting');
+  if (el) el.textContent = greeting;
+  const dl = document.getElementById('headerDateline');
+  if (dl) dl.textContent = t.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) + ' • SBI LHO Guwahati';
 
-  // Today banner
-  const banner = document.getElementById('todayBanner');
-  if (todayBdays.length > 0) {
-    banner.classList.add('visible');
-    banner.innerHTML = `
-      <div class="birthday-banner-title">
-        <span class="cake">🎂</span>
-        Birthday${todayBdays.length > 1 ? 's' : ''} Today — ${todayBdays.length} Official${todayBdays.length > 1 ? 's' : ''}!
-      </div>
-      <div class="bday-list">
-        ${todayBdays.map(o => `
-          <div class="bday-chip">
-            <div>
-              <div class="bday-chip-name"><span class="name-link" style="color:var(--ink);font-weight:700" onclick="openProfile(${officials.indexOf(o)})">${o.name}</span></div>
-              <div class="bday-chip-post">${stateShort(o.state)} • Turns ${calcAge(o.dob) + 1} today</div>
-            </div>
-            ${o.mobile ? `<button class="whatsapp-btn" onclick="openWa(${officials.indexOf(o)})">💬 WhatsApp</button>` : ''}
-          </div>
-        `).join('')}
-      </div>
-    `;
-  } else {
-    banner.classList.remove('visible');
+  // ── LIVE CLOCK ──
+  function tickClock() {
+    const now = new Date();
+    const hr  = now.getHours();
+    const gr  = hr < 12 ? 'Good Morning' : hr < 17 ? 'Good Afternoon' : 'Good Evening';
+    const cl  = document.getElementById('headerClock');
+    const cs  = document.getElementById('headerClockDate');
+    const ge  = document.getElementById('headerGreeting');
+    const dl  = document.getElementById('headerDateline');
+    if (cl) cl.textContent = now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+    if (ge) ge.textContent = gr;
+    if (dl) dl.textContent = now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) + ' • SBI LHO Guwahati';
+  }
+  tickClock();
+  if (!window._clockInterval) window._clockInterval = setInterval(tickClock, 1000);
+
+  // ── KPI CARDS ──
+  const kpis = [
+    { icon:'👥', num: officials.length,    label:'Total Officials', sub: states.length+' States/UTs', accent:'#c9a84c', pulse: false },
+    { icon:'🎂', num: todayBdays.length,   label:"Today's Birthdays", sub: next7.length+' in 7 days', accent:'#c0392b', pulse: todayBdays.length > 0 },
+    { icon:'⚡', num: next7.length,        label:'This Week', sub: 'Needs attention', accent:'#e67e22', pulse: false },
+    { icon:'📅', num: next30.length,       label:'Next 30 Days', sub: 'Upcoming birthdays', accent:'#2980b9', pulse: false },
+    { icon:'🎁', num: giftsSent,           label:'Mementos Sent', sub: (officials.length-giftsSent)+' pending', accent:'#27ae60', pulse: false },
+    { icon:'📱', num: officials.filter(o=>o.mobile).length, label:'WhatsApp Ready', sub: 'With mobile numbers', accent:'#25D366', pulse: false },
+  ];
+  const kpiEl = document.getElementById('dbKpiRow');
+  if (kpiEl) kpiEl.innerHTML = kpis.map(k => `
+    <div class="db-kpi">
+      <div class="db-kpi-accent" style="background:${k.accent}"></div>
+      ${k.pulse ? '<div class="db-kpi-pulse"></div>' : ''}
+      <span class="db-kpi-icon">${k.icon}</span>
+      <div class="db-kpi-num">${k.num}</div>
+      <div class="db-kpi-label">${k.label}</div>
+      <div class="db-kpi-sub">${k.sub}</div>
+    </div>
+  `).join('');
+
+  // ── TODAY ALERT ──
+  const alertEl = document.getElementById('dbTodayAlert');
+  if (alertEl) {
+    if (todayBdays.length > 0) {
+      alertEl.classList.remove('hidden');
+      alertEl.innerHTML = `
+        <div class="db-alert-title">🎂 Birthday${todayBdays.length>1?'s':''} Today — Send Greetings Now!</div>
+        <div class="db-alert-chips">
+          ${todayBdays.map(o => {
+            const idx = officials.indexOf(o);
+            const initials = o.name.replace(/^(Shri|Dr\.|Dr|Smt|Smti|Mrs\.|Mr\.|Ms\.|Sri)\.?\s+/i,'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+            const avatar = o.photo ? `<img src="${o.photo}" alt="">` : initials;
+            return `<div class="db-alert-chip" onclick="openProfile(${idx})">
+              <div class="db-alert-avatar">${avatar}</div>
+              <div>
+                <div class="db-alert-name">${escHtml(o.name)}</div>
+                <div class="db-alert-info">${escHtml(o.post||'').slice(0,45)}${(o.post||'').length>45?'…':''} • Turns ${(calcAge(o.dob)||0)+1}</div>
+              </div>
+              ${o.mobile ? `<button class="whatsapp-btn" style="margin-left:8px;flex-shrink:0" onclick="event.stopPropagation();openWa(${idx})">💬</button>` : ''}
+            </div>`;
+          }).join('')}
+        </div>`;
+    } else {
+      alertEl.classList.add('hidden');
+    }
   }
 
-  // Upcoming section
+  // ── STATE BARS ──
+  const stateColors = { ASSAM:'#1a3a5c', 'ARUNACHAL PRADESH':'#1a4a1a', TRIPURA:'#5c1a4a' };
+  const stateOrder = ['ASSAM','ARUNACHAL PRADESH','TRIPURA'];
+  const maxCount = Math.max(...stateOrder.map(s => officials.filter(o=>o.state===s).length), 1);
+  const sbEl = document.getElementById('dbStateBars');
+  if (sbEl) sbEl.innerHTML = stateOrder.map(s => {
+    const list = officials.filter(o=>o.state===s);
+    const withD = list.filter(o=>o.dob).length;
+    const withM = list.filter(o=>o.mobile).length;
+    const pct = Math.round(list.length / maxCount * 100);
+    const color = stateColors[s] || '#555';
+    const label = s === 'ARUNACHAL PRADESH' ? 'Arunachal Pradesh' : s.charAt(0)+s.slice(1).toLowerCase();
+    return `<div class="db-state-bar-item">
+      <div class="db-state-bar-top">
+        <div class="db-state-bar-name">${label}</div>
+        <div class="db-state-bar-count">${list.length} officials</div>
+      </div>
+      <div class="db-state-bar-track">
+        <div class="db-state-bar-fill" style="width:${pct}%;background:${color}"></div>
+      </div>
+      <div class="db-state-bar-meta">
+        <span>DOB: <strong>${withD}</strong></span>
+        <span>Mobile: <strong>${withM}</strong></span>
+        <span>Upcoming: <strong>${list.filter(o=>{const d=daysToNextBirthday(o.dob);return d!==null&&d<=30}).length}</strong></span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── PIPELINE GRID ──
+  const pgEl = document.getElementById('dbPipelineGrid');
+  if (pgEl) pgEl.innerHTML = `
+    <div class="db-pipe-cell red" onclick="showTab('database');document.getElementById('dobFilter').value='next-30';applyFilters()">
+      <div class="db-pipe-num">${todayBdays.length}</div>
+      <div class="db-pipe-lbl">Today</div>
+    </div>
+    <div class="db-pipe-cell orange" onclick="showTab('database');document.getElementById('dobFilter').value='next-30';applyFilters()">
+      <div class="db-pipe-num">${next3.length}</div>
+      <div class="db-pipe-lbl">In 3 days</div>
+    </div>
+    <div class="db-pipe-cell blue" onclick="showTab('database');document.getElementById('dobFilter').value='next-30';applyFilters()">
+      <div class="db-pipe-num">${next7.length}</div>
+      <div class="db-pipe-lbl">In 7 days</div>
+    </div>
+    <div class="db-pipe-cell green" onclick="showTab('database');document.getElementById('dobFilter').value='next-30';applyFilters()">
+      <div class="db-pipe-num">${next30.length}</div>
+      <div class="db-pipe-lbl">In 30 days</div>
+    </div>
+  `;
+  const pbEl = document.getElementById('dbPipelineBadge');
+  if (pbEl) pbEl.textContent = withDob.length + ' with DOB';
+
+  // ── UPCOMING 30 DAYS LIST ──
   const upcoming = withDob
     .map(o => ({ ...o, idx: officials.indexOf(o), days: daysToNextBirthday(o.dob) }))
-    .filter(o => o.days > 0 && o.days <= 30)
-    .sort((a, b) => a.days - b.days);
+    .filter(o => o.days >= 0 && o.days <= 30)
+    .sort((a,b) => a.days - b.days);
 
-  const section = document.getElementById('upcomingSection');
-  if (upcoming.length === 0) {
-    section.innerHTML = `<div class="section-title">Upcoming Birthdays <span class="badge">NEXT 30 DAYS</span></div>
-      <div class="empty-state"><div class="icon">🎈</div><p>No birthdays in the next 30 days</p></div>`;
-    return;
-  }
-  section.innerHTML = `
-    <div class="section-title">Upcoming Birthdays <span class="badge">NEXT 30 DAYS</span></div>
-    <div class="upcoming-grid">
-      ${upcoming.map(o => `
-        <div class="upcoming-card">
-          <div class="days-circle ${o.days <= 3 ? 'urgent' : o.days <= 7 ? 'soon' : 'upcoming'}">
-            <div class="num">${o.days}</div>
-            <div class="lbl">${o.days === 1 ? 'day' : 'days'}</div>
+  const upEl = document.getElementById('dbUpcomingList');
+  if (upEl) {
+    if (upcoming.length === 0) {
+      upEl.innerHTML = '<div class="db-empty">🎈 No birthdays in the next 30 days</div>';
+    } else {
+      const ub = document.getElementById('dbUpcomingBadge');
+      if (ub) ub.textContent = upcoming.length + ' officials';
+      upEl.innerHTML = upcoming.map(o => {
+        const initials = o.name.replace(/^(Shri|Dr\.|Dr|Smt|Smti|Mrs\.|Mr\.|Ms\.|Sri)\.?\s+/i,'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+        const avatar = o.photo ? `<img src="${o.photo}" alt="">` : initials;
+        const cls = o.days===0?'today':o.days<=3?'urgent':o.days<=7?'soon':'normal';
+        const spill = o.state==='ARUNACHAL PRADESH'?'ARUNACHAL':o.state;
+        return `<div class="db-upcoming-item" onclick="openProfile(${o.idx})">
+          <div class="db-countdown ${cls}">
+            <div class="db-countdown-num">${o.days===0?'🎂':o.days}</div>
+            <div class="db-countdown-lbl">${o.days===0?'TODAY':'days'}</div>
           </div>
+          <div class="db-upcoming-avatar">${avatar}</div>
           <div style="flex:1;min-width:0">
-            <div class="uc-name"><span class="name-link" onclick="openProfile(${o.idx})">${o.name}</span></div>
-            <div class="uc-post">${o.post}</div>
-            <div class="uc-meta">
-              <span class="state-pill pill-${stateShort(o.state)}">${stateShort(o.state)}</span>
-              <span class="uc-dob">🎂 ${formatDob(o.dob)}</span>
-              ${o.mobile ? `<button class="whatsapp-btn" style="font-size:11px;padding:3px 9px" onclick="openWa(${o.idx})">💬 WA</button>` : ''}
+            <div class="db-upcoming-name">${escHtml(o.name)}</div>
+            <div class="db-upcoming-post">${escHtml((o.post||'').slice(0,65))}${(o.post||'').length>65?'…':''}</div>
+            <div class="db-upcoming-meta">
+              <span class="state-pill pill-${spill}" style="font-size:9px">${spill}</span>
+              <span class="db-dob-tag">🎂 ${formatDob(o.dob)}</span>
             </div>
           </div>
+          ${o.mobile ? `<button class="db-wa-mini" onclick="event.stopPropagation();openWa(${o.idx})">💬 WA</button>` : ''}
+        </div>`;
+      }).join('');
+    }
+  }
+
+  // ── THIS WEEK ──
+  const weekList = withDob
+    .map(o=>({...o,idx:officials.indexOf(o),days:daysToNextBirthday(o.dob)}))
+    .filter(o=>o.days>=0&&o.days<=7)
+    .sort((a,b)=>a.days-b.days);
+  const wkEl = document.getElementById('dbWeekList');
+  const wbEl = document.getElementById('dbWeekBadge');
+  if (wbEl) wbEl.textContent = weekList.length + ' birthdays';
+  if (wkEl) {
+    if (weekList.length===0) {
+      wkEl.innerHTML='<div class="db-empty">No birthdays this week</div>';
+    } else {
+      wkEl.innerHTML = weekList.map(o => {
+        const cls = o.days===0?'#c0392b':o.days<=3?'#e67e22':'#2980b9';
+        const tag = o.days===0?'TODAY':o.days===1?'TOMORROW':o.days+'d';
+        return `<div class="db-week-item" onclick="openProfile(${o.idx})">
+          <div class="db-week-dot" style="background:${cls}"></div>
+          <div style="flex:1;min-width:0">
+            <div class="db-week-name">${escHtml(o.name)}</div>
+            <div class="db-week-sub">${formatDob(o.dob)} · Age ${(calcAge(o.dob)||0)+1}</div>
+          </div>
+          <span class="db-week-days" style="background:${cls}22;color:${cls}">${tag}</span>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  // ── MEMENTO SUMMARY ──
+  const mmEl = document.getElementById('dbMementoSummary');
+  if (mmEl) {
+    const pct = officials.length ? Math.round(giftsSent/officials.length*100) : 0;
+    const urgentPending = officials.filter(o=>!o.giftSent&&o.dob&&daysToNextBirthday(o.dob)<=7&&daysToNextBirthday(o.dob)>=0).length;
+    mmEl.innerHTML = `<div class="db-memento-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+        <span style="font-size:12px;color:#888">Overall progress</span>
+        <span style="font-size:13px;font-weight:700;color:var(--green)">${pct}%</span>
+      </div>
+      <div class="db-memento-bar-track">
+        <div class="db-memento-bar-fill" style="width:${pct}%"></div>
+      </div>
+      <div class="db-memento-stats">
+        <div class="db-memento-stat">
+          <div class="db-memento-stat-num" style="color:var(--green)">${giftsSent}</div>
+          <div class="db-memento-stat-lbl">Sent</div>
         </div>
-      `).join('')}
-    </div>
-  `;
+        <div class="db-memento-stat">
+          <div class="db-memento-stat-num" style="color:var(--orange)">${giftPending}</div>
+          <div class="db-memento-stat-lbl">Due Soon</div>
+        </div>
+        <div class="db-memento-stat">
+          <div class="db-memento-stat-num" style="color:var(--red)">${urgentPending}</div>
+          <div class="db-memento-stat-lbl">Urgent</div>
+        </div>
+        <div class="db-memento-stat">
+          <div class="db-memento-stat-num">${officials.length-giftsSent}</div>
+          <div class="db-memento-stat-lbl">Total Pending</div>
+        </div>
+      </div>
+      ${urgentPending>0?`<div style="margin-top:12px;background:#fff5f5;border:1px solid #ffcccc;border-radius:8px;padding:8px 12px;font-size:12px;color:var(--red);font-weight:600">⚠️ ${urgentPending} memento${urgentPending>1?'s':''} urgent — birthday within 7 days!</div>`:''}
+    </div>`;
+  }
+
+  // ── MONTH HEATMAP ──
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const monthCounts = Array(12).fill(0);
+  withDob.forEach(o => monthCounts[new Date(o.dob).getMonth()]++);
+  const maxM = Math.max(...monthCounts, 1);
+  const hmEl = document.getElementById('dbMonthHeatmap');
+  if (hmEl) hmEl.innerHTML = months.map((m,i) => {
+    const cnt = monthCounts[i];
+    const heat = cnt===0?'has-0':cnt<maxM*0.33?'has-low':cnt<maxM*0.66?'has-mid':'has-high';
+    const isCur = i===t.getMonth();
+    return `<div class="db-month-cell ${heat}${isCur?' current-month':''}" onclick="showTab('calendar')" title="${m}: ${cnt} birthdays">
+      <div class="db-month-name">${m}</div>
+      <div class="db-month-count">${cnt}</div>
+    </div>`;
+  }).join('');
 }
 
 // ========== FILTERS & TABLE ==========
@@ -1916,7 +2746,7 @@ function renderTable() {
       <td class="td-mobile">
         ${o.mobile ? `<a href="tel:+91${o.mobile}">${o.mobile}</a>` : '<span style="color:#ddd">—</span>'}
       </td>
-      <td class="gift-cell">
+      <td class="gift-cell admin-only-cell">
         <button class="gift-toggle ${o.giftSent ? 'sent' : ''}" onclick="toggleGift(${realIdx})" title="${o.giftSent ? 'Gift Sent ✓' : 'Mark Gift Sent'}">
           ${o.giftSent ? '✅' : '○'}
         </button>
@@ -1924,7 +2754,7 @@ function renderTable() {
       <td>
         <div class="action-cell">
           <button class="whatsapp-icon-btn ${o.mobile ? '' : 'no-phone'}" onclick="${o.mobile ? `openWa(${realIdx})` : 'void(0)'}" title="Send WhatsApp">💬</button>
-          <button class="btn-quick-edit" onclick="openQePanel(${realIdx})" title="Quick Edit">✏️ Edit</button>
+          <button class="btn-quick-edit admin-only" onclick="openQePanel(${realIdx})" title="Quick Edit">✏️ Edit</button>
         </div>
       </td>
     </tr>`;
@@ -2036,7 +2866,7 @@ function renderGifts() {
               <td class="td-post" style="font-size:11px">${escHtml(o.post)}</td>
               <td><span class="state-pill pill-${stateShort(o.state)}">${stateShort(o.state)}</span></td>
               <td class="td-mobile">${o.mobile ? `<a href="tel:+91${o.mobile}">${o.mobile}</a>` : '—'}</td>
-              <td><button class="gift-toggle" onclick="toggleGift(${idx})">○ Mark Sent</button></td>
+              <td class="admin-only-cell"><button class="gift-toggle admin-only" onclick="toggleGift(${idx})">○ Mark Sent</button></td>
               <td><span style="font-size:11px;color:#aaa">${escHtml(o.giftNote || '—')}</span></td>
               <td>${o.mobile ? `<button class="whatsapp-icon-btn" onclick="openWa(${idx})">💬</button>` : ''}</td>
             </tr>`;
@@ -2059,7 +2889,7 @@ function renderGifts() {
               <td><span class="state-pill pill-${stateShort(o.state)}">${stateShort(o.state)}</span></td>
               <td class="td-dob">${formatDob(o.dob)}</td>
               <td style="font-size:12px">${escHtml(o.giftNote || '—')}</td>
-              <td><button class="btn btn-danger btn-sm" onclick="toggleGift(${idx})">Undo</button></td>
+              <td class="admin-only-cell"><button class="btn btn-danger btn-sm admin-only" onclick="toggleGift(${idx})">Undo</button></td>
             </tr>`;
           }).join('')}
         </tbody>
@@ -2654,6 +3484,115 @@ function filterStateList(listId, query) {
   });
 }
 
+
+// ========== ADMIN PIN SYSTEM ==========
+const ADMIN_PIN = '1234';   // ← Change this to your preferred PIN
+let pinBuffer = '';
+let isAdmin = false;
+
+function setAdminMode(val) {
+  isAdmin = val;
+  const body = document.body;
+  const banner = document.getElementById('viewOnlyBanner');
+  const btn = document.getElementById('adminLockBtn');
+  const icon = document.getElementById('lockIcon');
+  const lbl = document.getElementById('lockLabel');
+  if (val) {
+    body.classList.remove('view-mode');
+    if (banner) banner.classList.add('hidden');
+    if (btn)  btn.classList.add('unlocked');
+    if (icon) icon.textContent = '🔓';
+    if (lbl)  lbl.textContent = 'Admin';
+    sessionStorage.setItem('ne_admin', '1');
+  } else {
+    body.classList.add('view-mode');
+    if (banner) banner.classList.remove('hidden');
+    if (btn)  btn.classList.remove('unlocked');
+    if (icon) icon.textContent = '🔒';
+    if (lbl)  lbl.textContent = 'Admin Login';
+    sessionStorage.removeItem('ne_admin');
+  }
+}
+
+function toggleAdminLock() {
+  if (isAdmin) {
+    if (confirm('Log out of Admin mode?')) setAdminMode(false);
+  } else {
+    openPinOverlay();
+  }
+}
+
+function openPinOverlay() {
+  pinBuffer = '';
+  updatePinDots();
+  document.getElementById('pinError').textContent = '';
+  document.getElementById('pinBoxSub').textContent = 'Enter 4-digit Admin PIN to unlock editing';
+  document.getElementById('pinOverlay').classList.add('open');
+}
+
+function closePinOverlay() {
+  document.getElementById('pinOverlay').classList.remove('open');
+  pinBuffer = '';
+  updatePinDots();
+}
+
+function pinPress(d) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += d;
+  updatePinDots();
+  if (pinBuffer.length === 4) {
+    setTimeout(checkPin, 100);
+  }
+}
+
+function pinDel() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  updatePinDots();
+  document.getElementById('pinError').textContent = '';
+}
+
+function pinClear() {
+  pinBuffer = '';
+  updatePinDots();
+  document.getElementById('pinError').textContent = '';
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('pd' + i);
+    if (!dot) continue;
+    dot.className = 'pin-dot' + (i < pinBuffer.length ? ' filled' : '');
+  }
+}
+
+function checkPin() {
+  if (pinBuffer === ADMIN_PIN) {
+    setAdminMode(true);
+    closePinOverlay();
+    showToast('✅ Admin access granted!', 'success');
+  } else {
+    for (let i = 0; i < 4; i++) {
+      const dot = document.getElementById('pd' + i);
+      if (dot) dot.className = 'pin-dot error';
+    }
+    document.getElementById('pinError').textContent = 'Incorrect PIN. Please try again.';
+    setTimeout(() => {
+      pinBuffer = '';
+      updatePinDots();
+      document.getElementById('pinError').textContent = '';
+    }, 900);
+  }
+}
+
+// Keyboard support for PIN
+document.addEventListener('keydown', e => {
+  const overlay = document.getElementById('pinOverlay');
+  if (!overlay?.classList.contains('open')) return;
+  if (e.key >= '0' && e.key <= '9') pinPress(parseInt(e.key));
+  if (e.key === 'Backspace') pinDel();
+  if (e.key === 'Escape') closePinOverlay();
+});
+
 // ========== QUICK-EDIT PANEL ==========
 function openQePanel(idx) {
   const o = officials[idx];
@@ -2743,6 +3682,12 @@ function deleteFromQe() {
 }
 
 // ========== START ==========
+// Restore admin session
+if (sessionStorage.getItem('ne_admin') === '1') {
+  setAdminMode(true);
+} else {
+  setAdminMode(false);
+}
 // Sync global state filter from DB tab filter
 document.getElementById('globalStateFilter')?.addEventListener('change', function() {
   const dbF = document.getElementById('stateFilter');
