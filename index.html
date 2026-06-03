@@ -2583,9 +2583,9 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
 <div class="profile-overlay" id="profileOverlay" onclick="if(event.target===this)closeProfile()">
   <div class="profile-card" id="profileCard">
     <div class="pc-header">
-      <div class="pc-photo-wrap admin-only" onclick="document.getElementById('pcPhotoInput').click()" title="Click to upload photo">
+      <div class="pc-photo-wrap" id="pcPhotoWrap" title="Click to upload photo">
         <div class="pc-photo" id="pcPhotoDisp">👤</div>
-        <div class="pc-photo-upload-hint">📷</div>
+        <div class="pc-photo-upload-hint admin-only">📷</div>
         <input type="file" class="pc-photo-input" id="pcPhotoInput" accept="image/*" onchange="handlePhotoUpload(event)">
       </div>
       <div class="pc-header-info">
@@ -3497,6 +3497,17 @@ let currentProfileIdx = -1;
 
 function openProfile(idx) {
   currentProfileIdx = idx;
+  // Only allow photo upload click in admin mode
+  const wrap = document.getElementById('pcPhotoWrap');
+  if (wrap) {
+    if (isAdmin) {
+      wrap.style.cursor = 'pointer';
+      wrap.onclick = () => document.getElementById('pcPhotoInput').click();
+    } else {
+      wrap.style.cursor = 'default';
+      wrap.onclick = null;
+    }
+  }
   const o = officials[idx];
 
   // Header
