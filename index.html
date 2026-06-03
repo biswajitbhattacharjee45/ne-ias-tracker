@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NE Dignitaries Connect — Birthday & Memento Management</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1106,6 +1108,32 @@ td {
   footer { margin-bottom: 56px; }
 }
 
+
+/* ── FIREBASE SYNC ── */
+.sync-indicator {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  padding: 0 4px;
+}
+.sync-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #aaa; flex-shrink: 0;
+  transition: background 0.3s;
+}
+.sync-dot.syncing  { background: var(--gold); animation: pulse 1s infinite; }
+.sync-dot.synced   { background: var(--green); }
+.sync-dot.offline  { background: var(--red); }
+.sync-dot.loading  { background: var(--blue); animation: pulse 1s infinite; }
+.cloud-status-bar {
+  background: rgba(39,174,96,0.12);
+  border-bottom: 1px solid rgba(39,174,96,0.2);
+  padding: 5px 32px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  display: flex; align-items: center; gap: 8px;
+}
+.cloud-status-bar.hidden { display: none; }
+
 /* ═══════════════════════════════════════
    RESPONSIVE — TABLET & MOBILE
 ═══════════════════════════════════════ */
@@ -2131,6 +2159,32 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
   footer { margin-bottom: 56px; }
 }
 
+
+/* ── FIREBASE SYNC ── */
+.sync-indicator {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  padding: 0 4px;
+}
+.sync-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #aaa; flex-shrink: 0;
+  transition: background 0.3s;
+}
+.sync-dot.syncing  { background: var(--gold); animation: pulse 1s infinite; }
+.sync-dot.synced   { background: var(--green); }
+.sync-dot.offline  { background: var(--red); }
+.sync-dot.loading  { background: var(--blue); animation: pulse 1s infinite; }
+.cloud-status-bar {
+  background: rgba(39,174,96,0.12);
+  border-bottom: 1px solid rgba(39,174,96,0.2);
+  padding: 5px 32px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  display: flex; align-items: center; gap: 8px;
+}
+.cloud-status-bar.hidden { display: none; }
+
 /* ═══════════════════════════════════════
    RESPONSIVE — TABLET & MOBILE
 ═══════════════════════════════════════ */
@@ -2326,6 +2380,7 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
       <div class="header-clock-time" id="headerClock">00:00:00</div>
     </div>
     <div class="header-right">
+      <div class="sync-indicator" id="syncIndicator"><div class="sync-dot loading" id="syncDot"></div><span id="syncLabel">Connecting...</span></div>
       <button class="admin-lock-btn" id="adminLockBtn" onclick="toggleAdminLock()" title="Admin access">
         <span class="lock-icon" id="lockIcon">🔒</span>
         <span id="lockLabel">Admin Login</span>
@@ -2336,6 +2391,7 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
 </header>
 
 
+<div class="cloud-status-bar hidden" id="cloudStatusBar">☁️ <span id="cloudStatusMsg">Connected to cloud</span></div>
 <div class="global-search-bar" id="globalSearchBar">
   <div class="global-search-inner">
     <div class="global-search-wrap" id="gsWrap">
@@ -2587,6 +2643,14 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
       </div>
       <div id="importResult" style="margin-top:20px"></div>
     </div>
+    <div class="import-section" style="border: 2px solid var(--gold); background: linear-gradient(135deg, #fffdf5, #fff9e8);">
+      <h2 style="color:var(--ink)">🚀 Publish to GitHub <span style="background:var(--gold);color:var(--ink);font-size:11px;padding:3px 8px;border-radius:6px;vertical-align:middle;margin-left:8px;font-family:'DM Sans',sans-serif;font-weight:700">RECOMMENDED</span></h2>
+      <p>This bakes all your uploaded photos, notes, Wikipedia data and gift records permanently into the HTML file. Upload the downloaded file to GitHub and <strong>everyone will see the photos instantly</strong>.</p>
+      <div id="publishStatus" style="margin-bottom:12px"></div>
+      <button class="btn btn-gold admin-only" style="font-size:14px;padding:12px 28px" onclick="publishToFile()">📥 Download Published File</button>
+      <div style="margin-top:12px;font-size:12px;color:#888">After downloading → go to GitHub → open index.html → click pencil icon → select all → paste → commit</div>
+    </div>
+
     <div class="import-section">
       <h2>📤 Export Data</h2>
       <p>Download your complete officials database as a JSON backup file. You can use this to restore data if needed.</p>
@@ -2823,23 +2887,173 @@ const PAGE_SIZE = 50;
 let currentTab = 'dashboard';
 let sortDir = {};
 
+// ========== FIREBASE CONFIG ==========
+const firebaseConfig = {
+  apiKey: "AIzaSyDecaBJVER1eZa0cWvk9cRzJARLo8UMH78",
+  authDomain: "ne-dignitaries-connect.firebaseapp.com",
+  projectId: "ne-dignitaries-connect",
+  storageBucket: "ne-dignitaries-connect.firebasestorage.app",
+  messagingSenderId: "1008241660156",
+  appId: "1:1008241660156:web:6efe48863fea9938f3c779"
+};
+
+let db;
+let fbInitialized = false;
+let saveTimeout = null;
+
+function initFirebase() {
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    fbInitialized = true;
+    setSyncStatus('loading', 'Loading from cloud...');
+    return true;
+  } catch(e) {
+    console.error('Firebase init failed:', e);
+    setSyncStatus('offline', 'Offline mode');
+    return false;
+  }
+}
+
+function setSyncStatus(state, label) {
+  const dot = document.getElementById('syncDot');
+  const lbl = document.getElementById('syncLabel');
+  if (dot) dot.className = 'sync-dot ' + state;
+  if (lbl) lbl.textContent = label;
+}
+
+function showCloudStatus(msg, duration = 3000) {
+  const bar = document.getElementById('cloudStatusBar');
+  const msg_el = document.getElementById('cloudStatusMsg');
+  if (!bar || !msg_el) return;
+  msg_el.textContent = msg;
+  bar.classList.remove('hidden');
+  if (duration > 0) setTimeout(() => bar.classList.add('hidden'), duration);
+}
+
 // ========== INIT ==========
 function init() {
+  // Always start with embedded data as fallback
+  officials = JSON.parse(JSON.stringify(ORIGINAL_DATA));
+
+  // Merge any local additions from localStorage
   const saved = localStorage.getItem('ne_officials_v2');
   if (saved) {
-    try { officials = JSON.parse(saved); }
-    catch(e) { officials = [...ORIGINAL_DATA]; }
-  } else {
-    officials = JSON.parse(JSON.stringify(ORIGINAL_DATA));
+    try {
+      const local = JSON.parse(saved);
+      if (local.length > officials.length) officials = local;
+    } catch(e) {}
   }
+
+  // Render immediately with local data
   applyFilters();
   renderDashboard();
   renderCalendar();
   renderGifts();
+
+  // Then load from Firebase
+  if (initFirebase()) {
+    loadFromFirebase();
+    listenForUpdates();
+  } else {
+    setSyncStatus('offline', 'Offline');
+  }
 }
 
+// ========== FIREBASE LOAD ==========
+async function loadFromFirebase() {
+  if (!fbInitialized) return;
+  try {
+    const doc = await db.collection('app').doc('officials').get();
+    if (doc.exists) {
+      const data = doc.data();
+      if (data.list && data.list.length > 0) {
+        officials = data.list;
+        localStorage.setItem('ne_officials_v2', JSON.stringify(officials));
+        applyFilters();
+        renderDashboard();
+        renderCalendar();
+        renderGifts();
+        setSyncStatus('synced', 'Synced ✓');
+        console.log('Loaded ' + officials.length + ' officials from Firebase');
+      } else {
+        // First time — push embedded data to Firebase
+        setSyncStatus('syncing', 'Initialising...');
+        await pushToFirebase();
+      }
+    } else {
+      // Document doesn't exist yet — create it
+      setSyncStatus('syncing', 'Setting up...');
+      await pushToFirebase();
+    }
+  } catch(e) {
+    console.error('Firebase load error:', e);
+    setSyncStatus('offline', 'Using local data');
+    showCloudStatus('⚠️ Could not connect to cloud. Using local data.', 5000);
+  }
+}
+
+// ========== REAL-TIME LISTENER ==========
+function listenForUpdates() {
+  if (!fbInitialized) return;
+  db.collection('app').doc('officials').onSnapshot(doc => {
+    if (!doc.exists) return;
+    const data = doc.data();
+    if (!data.list) return;
+    // Only update if data is newer than what we have
+    const remoteTs = data.updatedAt || 0;
+    const localTs  = parseInt(localStorage.getItem('ne_officials_ts') || '0');
+    if (remoteTs > localTs) {
+      officials = data.list;
+      localStorage.setItem('ne_officials_v2', JSON.stringify(officials));
+      localStorage.setItem('ne_officials_ts', remoteTs.toString());
+      applyFilters();
+      renderDashboard();
+      renderCalendar();
+      renderGifts();
+      setSyncStatus('synced', 'Synced ✓');
+    }
+  }, err => {
+    console.warn('Snapshot error:', err);
+  });
+}
+
+// ========== PUSH TO FIREBASE ==========
+async function pushToFirebase() {
+  if (!fbInitialized) return false;
+  try {
+    const ts = Date.now();
+    await db.collection('app').doc('officials').set({
+      list: officials,
+      updatedAt: ts,
+      count: officials.length
+    });
+    localStorage.setItem('ne_officials_ts', ts.toString());
+    setSyncStatus('synced', 'Saved ✓');
+    return true;
+  } catch(e) {
+    console.error('Firebase push error:', e);
+    setSyncStatus('offline', 'Save failed');
+    return false;
+  }
+}
+
+// ========== SAVE (local + cloud) ==========
 function save() {
+  // Always save locally first (instant)
   localStorage.setItem('ne_officials_v2', JSON.stringify(officials));
+
+  // Debounced cloud save (waits 800ms after last change)
+  setSyncStatus('syncing', 'Saving...');
+  if (saveTimeout) clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(async () => {
+    if (fbInitialized) {
+      const ok = await pushToFirebase();
+      if (ok) showCloudStatus('✅ Changes saved to cloud — visible to all users instantly!', 3000);
+    } else {
+      setSyncStatus('offline', 'Saved locally');
+    }
+  }, 800);
 }
 
 // ========== DATE UTILITIES ==========
@@ -3984,6 +4198,65 @@ function filterStateList(listId, query) {
 }
 
 
+
+
+// ========== PUBLISH TO FILE ==========
+function publishToFile() {
+  const statusEl = document.getElementById('publishStatus');
+  if (statusEl) {
+    statusEl.innerHTML = '<div style="background:#fff8ed;border:1px solid #ffe0b2;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--orange)">⏳ Preparing file... please wait.</div>';
+  }
+
+  setTimeout(() => {
+    try {
+      // Get current officials data (with photos, notes, wiki etc.)
+      const currentData = JSON.stringify(officials, null, 0);
+
+      // Read the current page HTML
+      let html = document.documentElement.outerHTML;
+
+      // Replace ORIGINAL_DATA with current data so it's baked in
+      const origStart = html.indexOf('const ORIGINAL_DATA = ');
+      const origEnd   = html.indexOf(';
+', origStart) + 2;
+      if (origStart === -1) {
+        showToast('Could not locate data block', 'error');
+        return;
+      }
+      html = html.slice(0, origStart) + 'const ORIGINAL_DATA = ' + currentData + ';
+' + html.slice(origEnd);
+
+      // Also clear localStorage instruction - fresh users get baked data
+      // Count photos
+      const photoCount = officials.filter(o => o.photo).length;
+      const wikiCount  = officials.filter(o => o.wikiSummary).length;
+
+      // Download
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'ne_dignitaries_connect_published.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+
+      if (statusEl) {
+        statusEl.innerHTML = `<div style="background:#e8faf0;border:1px solid #b3e8cc;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--green)">
+          ✅ File downloaded! Contains <strong>${officials.length} officials</strong>, <strong>${photoCount} photos</strong>, <strong>${wikiCount} Wikipedia entries</strong>. Upload to GitHub as index.html.
+        </div>`;
+      }
+      showToast('✅ Published file downloaded!', 'success');
+
+    } catch(err) {
+      console.error(err);
+      if (statusEl) {
+        statusEl.innerHTML = '<div style="background:#fff0f0;border:1px solid #ffcccc;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--red)">❌ Error generating file. Please try again.</div>';
+      }
+      showToast('Error publishing file', 'error');
+    }
+  }, 300);
+}
 
 // ========== PHOTO LIGHTBOX ==========
 function openPhotoLightbox(src, name) {
