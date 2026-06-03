@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NE IAS Officials — Birthday & Memento Management</title>
+<title>NE Dignitaries Connect — Birthday & Memento Management</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -896,11 +896,7 @@ td {
 }
 .state-search-input:focus { border-color: var(--gold); }
 
-@media (max-width: 768px) {
-  .global-search-bar { padding: 10px 16px; }
-  .global-search-wrap { max-width: 100%; }
-  .state-tab-grid { grid-template-columns: 1fr; }
-}
+
 
 
 
@@ -1008,7 +1004,198 @@ td {
   gap: 8px;
   justify-content: center;
 }
-.view-only-banner.hidden { display: none !important; }
+.view-only-banner
+
+/* ── MOBILE BOTTOM NAV BAR ── */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--ink);
+  border-top: 1px solid rgba(201,168,76,0.2);
+  z-index: 200;
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.mobile-bottom-nav-inner {
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+}
+.mob-nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255,255,255,0.45);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  transition: color 0.15s;
+  gap: 3px;
+  border-top: 2px solid transparent;
+}
+.mob-nav-btn .mob-icon { font-size: 18px; line-height: 1; }
+.mob-nav-btn.active {
+  color: var(--gold-light);
+  border-top-color: var(--gold);
+}
+.mob-nav-btn:hover { color: rgba(255,255,255,0.8); }
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav { display: block; }
+  .nav-tabs { display: none; }
+  .main { padding-bottom: 72px; }
+  footer { margin-bottom: 56px; }
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — TABLET & MOBILE
+═══════════════════════════════════════ */
+
+/* Tablet */
+@media (max-width: 1100px) {
+  .db-main-grid { grid-template-columns: 1fr; }
+  .db-kpi-row   { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+  /* ── HEADER ── */
+  .header-inner {
+    padding: 10px 14px;
+    flex-wrap: nowrap;
+    gap: 0;
+    align-items: center;
+  }
+  .header-brand {
+    padding-right: 12px;
+    margin-right: 0;
+    border-right: none;
+    flex: 1;
+    min-width: 0;
+  }
+  .header-logo  { font-size: 16px; }
+  .header-subtitle { display: none; }
+  .header-live  { display: flex; }
+  .header-clock {
+    padding: 4px 10px;
+    margin-right: 10px;
+    border-radius: 8px;
+  }
+  .header-clock-time { font-size: 14px; letter-spacing: 2px; }
+  .header-right { gap: 8px; flex-shrink: 0; }
+  .admin-lock-btn { padding: 5px 10px; font-size: 11px; }
+  .admin-lock-btn span:last-child { display: none; }
+  .btn-gold.btn-sm { padding: 6px 10px; font-size: 11px; }
+
+  /* ── GLOBAL SEARCH BAR ── */
+  .global-search-bar { padding: 8px 14px; }
+  .global-search-inner { flex-wrap: wrap; gap: 8px; }
+  .global-search-wrap { min-width: 100%; order: 1; }
+  .global-state-select { flex: 1; order: 2; font-size: 12px; padding: 8px 10px; }
+  .global-search-results-count { order: 3; }
+
+  /* ── NAV TABS ── */
+  .nav-inner {
+    padding: 0 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-tab { padding: 12px 14px; font-size: 11.5px; white-space: nowrap; }
+
+  /* ── MAIN CONTENT ── */
+  .main { padding: 12px; }
+
+  /* ── VIEW-ONLY BANNER ── */
+  .view-only-banner { padding: 7px 14px; font-size: 11px; }
+
+  /* ── DASHBOARD KPI ── */
+  .db-kpi-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .db-kpi { padding: 14px 12px 10px; border-radius: 12px; }
+  .db-kpi-num { font-size: 28px; }
+  .db-kpi-icon { font-size: 18px; margin-bottom: 6px; }
+
+  /* ── DASHBOARD PANELS ── */
+  .db-main-grid { grid-template-columns: 1fr; gap: 14px; }
+  .db-pipeline-grid { grid-template-columns: repeat(2, 1fr); }
+  .db-month-heatmap { grid-template-columns: repeat(4, 1fr); }
+  .db-quick-actions { grid-template-columns: 1fr 1fr; }
+  .db-panel-title { font-size: 14px; }
+
+  /* ── TODAY ALERT ── */
+  .db-alert-chip { min-width: 100%; }
+  .db-today-alert { padding: 14px; }
+  .db-alert-title { font-size: 16px; }
+
+  /* ── UPCOMING LIST ── */
+  .db-upcoming-item { padding: 10px 14px; gap: 10px; }
+  .db-upcoming-post { max-width: 180px; }
+  .db-week-item { padding: 10px 14px; }
+
+  /* ── STATE BARS ── */
+  .db-state-bars { padding: 12px 14px; }
+
+  /* ── ALL OFFICIALS TABLE ── */
+  .controls-bar { flex-direction: column; gap: 8px; }
+  .search-box { min-width: 100%; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { font-size: 12px; min-width: 700px; }
+  td, th { padding: 9px 10px; }
+  .td-post { max-width: 160px; font-size: 11px; }
+
+  /* ── STAT-WISE CARDS ── */
+  .state-tab-grid { grid-template-columns: 1fr; }
+
+  /* ── MODALS ── */
+  .modal { padding: 24px 18px; border-radius: 16px; }
+  .modal-title { font-size: 22px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .qe-panel { width: 100%; border-radius: 20px 20px 0 0; top: auto; }
+
+  /* ── PROFILE CARD ── */
+  .profile-card { border-radius: 20px; }
+  .pc-header { padding: 20px 16px 16px; gap: 12px; }
+  .pc-photo { width: 68px; height: 68px; }
+  .pc-name { font-size: 17px; }
+  .pc-body { padding: 16px 16px 20px; }
+  .pc-grid { grid-template-columns: 1fr; gap: 10px; }
+  .pc-actions { flex-wrap: wrap; }
+
+  /* ── IMPORT SECTION ── */
+  .import-section { padding: 20px; }
+  .upload-area { padding: 24px; }
+
+  /* ── PAGINATION ── */
+  .pagination { gap: 5px; }
+  .page-btn { min-width: 32px; height: 32px; font-size: 12px; }
+
+  /* ── FOOTER ── */
+  footer { padding: 16px; font-size: 11px; }
+  footer div { gap: 4px; }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .header-logo { font-size: 14px; }
+  .header-clock-time { font-size: 12px; letter-spacing: 1px; }
+  .db-kpi-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .db-kpi-num { font-size: 24px; }
+  .db-month-heatmap { grid-template-columns: repeat(3, 1fr); }
+  .nav-tab { padding: 10px 11px; font-size: 11px; }
+}
+
+.hidden { display: none !important; }
 
 /* Admin-only elements hidden for viewers */
 body.view-mode .admin-only { display: none !important; }
@@ -1379,18 +1566,8 @@ body.view-mode .admin-only-cell { opacity: 0.25; pointer-events: none; }
 
 .db-empty { padding: 20px; text-align: center; color: #bbb; font-size: 13px; }
 
-@media (max-width: 1100px) {
-  .db-main-grid { grid-template-columns: 1fr; }
-  .db-kpi-row { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 768px) {
-  .db-hero { flex-direction: column; gap: 16px; text-align: center; padding: 20px; }
-  .db-clock { text-align: center; font-size: 28px; }
-  .db-clock-sub { text-align: center; }
-  .db-kpi-row { grid-template-columns: repeat(2, 1fr); }
-  .db-pipeline-grid { grid-template-columns: repeat(2, 1fr); }
-  .db-month-heatmap { grid-template-columns: repeat(4, 1fr); }
-}
+
+
 
 /* ===== PROFILE CARD MODAL ===== */
 .profile-overlay {
@@ -1786,20 +1963,197 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
 .upload-text strong { color: var(--ink); }
 
 /* Responsive */
+
+
+
+
+/* ── MOBILE BOTTOM NAV BAR ── */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--ink);
+  border-top: 1px solid rgba(201,168,76,0.2);
+  z-index: 200;
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.mobile-bottom-nav-inner {
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+}
+.mob-nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255,255,255,0.45);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  transition: color 0.15s;
+  gap: 3px;
+  border-top: 2px solid transparent;
+}
+.mob-nav-btn .mob-icon { font-size: 18px; line-height: 1; }
+.mob-nav-btn.active {
+  color: var(--gold-light);
+  border-top-color: var(--gold);
+}
+.mob-nav-btn:hover { color: rgba(255,255,255,0.8); }
+
 @media (max-width: 768px) {
-  .header-inner { padding: 10px 16px; gap: 0; flex-wrap: wrap; }
-  .header-brand { padding-right: 16px; margin-right: 16px; }
-  .header-live { display: none; }
-  .header-clock { padding: 6px 12px; margin-right: 8px; }
-  .header-clock-time { font-size: 15px; letter-spacing: 3px; }
-  .main { padding: 16px; }
-  .stat-grid { grid-template-columns: repeat(2, 1fr); }
-  .form-grid { grid-template-columns: 1fr; }
-  .controls-bar { flex-direction: column; }
+  .mobile-bottom-nav { display: block; }
+  .nav-tabs { display: none; }
+  .main { padding-bottom: 72px; }
+  footer { margin-bottom: 56px; }
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — TABLET & MOBILE
+═══════════════════════════════════════ */
+
+/* Tablet */
+@media (max-width: 1100px) {
+  .db-main-grid { grid-template-columns: 1fr; }
+  .db-kpi-row   { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+  /* ── HEADER ── */
+  .header-inner {
+    padding: 10px 14px;
+    flex-wrap: nowrap;
+    gap: 0;
+    align-items: center;
+  }
+  .header-brand {
+    padding-right: 12px;
+    margin-right: 0;
+    border-right: none;
+    flex: 1;
+    min-width: 0;
+  }
+  .header-logo  { font-size: 16px; }
+  .header-subtitle { display: none; }
+  .header-live  { display: flex; }
+  .header-clock {
+    padding: 4px 10px;
+    margin-right: 10px;
+    border-radius: 8px;
+  }
+  .header-clock-time { font-size: 14px; letter-spacing: 2px; }
+  .header-right { gap: 8px; flex-shrink: 0; }
+  .admin-lock-btn { padding: 5px 10px; font-size: 11px; }
+  .admin-lock-btn span:last-child { display: none; }
+  .btn-gold.btn-sm { padding: 6px 10px; font-size: 11px; }
+
+  /* ── GLOBAL SEARCH BAR ── */
+  .global-search-bar { padding: 8px 14px; }
+  .global-search-inner { flex-wrap: wrap; gap: 8px; }
+  .global-search-wrap { min-width: 100%; order: 1; }
+  .global-state-select { flex: 1; order: 2; font-size: 12px; padding: 8px 10px; }
+  .global-search-results-count { order: 3; }
+
+  /* ── NAV TABS ── */
+  .nav-inner {
+    padding: 0 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-tab { padding: 12px 14px; font-size: 11.5px; white-space: nowrap; }
+
+  /* ── MAIN CONTENT ── */
+  .main { padding: 12px; }
+
+  /* ── VIEW-ONLY BANNER ── */
+  .view-only-banner { padding: 7px 14px; font-size: 11px; }
+
+  /* ── DASHBOARD KPI ── */
+  .db-kpi-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .db-kpi { padding: 14px 12px 10px; border-radius: 12px; }
+  .db-kpi-num { font-size: 28px; }
+  .db-kpi-icon { font-size: 18px; margin-bottom: 6px; }
+
+  /* ── DASHBOARD PANELS ── */
+  .db-main-grid { grid-template-columns: 1fr; gap: 14px; }
+  .db-pipeline-grid { grid-template-columns: repeat(2, 1fr); }
+  .db-month-heatmap { grid-template-columns: repeat(4, 1fr); }
+  .db-quick-actions { grid-template-columns: 1fr 1fr; }
+  .db-panel-title { font-size: 14px; }
+
+  /* ── TODAY ALERT ── */
+  .db-alert-chip { min-width: 100%; }
+  .db-today-alert { padding: 14px; }
+  .db-alert-title { font-size: 16px; }
+
+  /* ── UPCOMING LIST ── */
+  .db-upcoming-item { padding: 10px 14px; gap: 10px; }
+  .db-upcoming-post { max-width: 180px; }
+  .db-week-item { padding: 10px 14px; }
+
+  /* ── STATE BARS ── */
+  .db-state-bars { padding: 12px 14px; }
+
+  /* ── ALL OFFICIALS TABLE ── */
+  .controls-bar { flex-direction: column; gap: 8px; }
   .search-box { min-width: 100%; }
-  table { font-size: 12px; }
-  td, th { padding: 10px 12px; }
-  .nav-inner { padding: 0 16px; overflow-x: auto; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { font-size: 12px; min-width: 700px; }
+  td, th { padding: 9px 10px; }
+  .td-post { max-width: 160px; font-size: 11px; }
+
+  /* ── STAT-WISE CARDS ── */
+  .state-tab-grid { grid-template-columns: 1fr; }
+
+  /* ── MODALS ── */
+  .modal { padding: 24px 18px; border-radius: 16px; }
+  .modal-title { font-size: 22px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .qe-panel { width: 100%; border-radius: 20px 20px 0 0; top: auto; }
+
+  /* ── PROFILE CARD ── */
+  .profile-card { border-radius: 20px; }
+  .pc-header { padding: 20px 16px 16px; gap: 12px; }
+  .pc-photo { width: 68px; height: 68px; }
+  .pc-name { font-size: 17px; }
+  .pc-body { padding: 16px 16px 20px; }
+  .pc-grid { grid-template-columns: 1fr; gap: 10px; }
+  .pc-actions { flex-wrap: wrap; }
+
+  /* ── IMPORT SECTION ── */
+  .import-section { padding: 20px; }
+  .upload-area { padding: 24px; }
+
+  /* ── PAGINATION ── */
+  .pagination { gap: 5px; }
+  .page-btn { min-width: 32px; height: 32px; font-size: 12px; }
+
+  /* ── FOOTER ── */
+  footer { padding: 16px; font-size: 11px; }
+  footer div { gap: 4px; }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .header-logo { font-size: 14px; }
+  .header-clock-time { font-size: 12px; letter-spacing: 1px; }
+  .db-kpi-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .db-kpi-num { font-size: 24px; }
+  .db-month-heatmap { grid-template-columns: repeat(3, 1fr); }
+  .nav-tab { padding: 10px 11px; font-size: 11px; }
 }
 
 .hidden { display: none !important; }
@@ -1834,8 +2188,8 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
 <header class="app-header">
   <div class="header-inner">
     <div class="header-brand">
-      <div class="header-logo">NE IAS Officials <span>Tracker</span></div>
-      <div class="header-subtitle">Birthday &amp; Memento Management • Northeast India</div>
+      <div class="header-logo">NE Dignitaries <span>Connect</span></div>
+      <div class="header-subtitle">Dignitaries Relationship Manager • Northeast India</div>
     </div>
     <div class="header-live">
       <div class="header-greeting" id="headerGreeting">Good Morning</div>
@@ -3082,6 +3436,8 @@ function showTab(tab) {
   ['dashboard','database','calendar','gifts','statewise','import'].forEach(t => {
     document.getElementById('tab-content-' + t).classList.toggle('hidden', t !== tab);
     document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    const mBtn = document.getElementById('mob-tab-' + t);
+    if (mBtn) mBtn.classList.toggle('active', t === tab);
   });
   if (tab === 'database') applyFilters();
   if (tab === 'calendar') renderCalendar();
@@ -3486,7 +3842,7 @@ function filterStateList(listId, query) {
 
 
 // ========== ADMIN PIN SYSTEM ==========
-const ADMIN_PIN = '1234';   // ← Change this to your preferred PIN
+const ADMIN_PIN = '1973';   // ← Change this to your preferred PIN
 let pinBuffer = '';
 let isAdmin = false;
 
@@ -3696,6 +4052,27 @@ document.getElementById('globalStateFilter')?.addEventListener('change', functio
 init();
 </script>
 
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-bottom-nav" id="mobileBottomNav">
+  <div class="mobile-bottom-nav-inner">
+    <button class="mob-nav-btn active" id="mob-tab-dashboard" onclick="showTab('dashboard')">
+      <span class="mob-icon">📊</span>Dashboard
+    </button>
+    <button class="mob-nav-btn" id="mob-tab-database" onclick="showTab('database')">
+      <span class="mob-icon">📋</span>Officials
+    </button>
+    <button class="mob-nav-btn" id="mob-tab-calendar" onclick="showTab('calendar')">
+      <span class="mob-icon">📅</span>Calendar
+    </button>
+    <button class="mob-nav-btn" id="mob-tab-statewise" onclick="showTab('statewise')">
+      <span class="mob-icon">🗺</span>States
+    </button>
+    <button class="mob-nav-btn" id="mob-tab-gifts" onclick="showTab('gifts')">
+      <span class="mob-icon">🎁</span>Mementos
+    </button>
+  </div>
+</div>
+
 <footer style="background:var(--ink);color:rgba(255,255,255,0.45);text-align:center;padding:22px 16px;font-size:12px;letter-spacing:0.4px;margin-top:40px">
   <div style="max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap">
     <span style="color:var(--gold);font-size:15px">&#10022;</span>
@@ -3704,7 +4081,7 @@ init();
     <span style="color:rgba(255,255,255,0.25)">|</span>
     <span>Chief Manager (Liaison), SBI LHO Guwahati</span>
     <span style="color:rgba(255,255,255,0.25)">|</span>
-    <span>NE IAS Officials Tracker v1.0</span>
+    <span>NE Dignitaries Connect v1.0</span>
 
     <span style="color:var(--gold);font-size:15px">&#10022;</span>
   </div>
