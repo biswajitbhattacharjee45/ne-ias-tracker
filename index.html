@@ -1071,31 +1071,45 @@ td {
 
   /* ── HEADER ── */
   .header-inner {
-    padding: 10px 14px;
-    flex-wrap: nowrap;
+    padding: 8px 14px;
+    flex-wrap: wrap;
     gap: 0;
     align-items: center;
+    row-gap: 4px;
   }
   .header-brand {
-    padding-right: 12px;
+    padding-right: 0;
     margin-right: 0;
     border-right: none;
     flex: 1;
     min-width: 0;
+    order: 1;
   }
   .header-logo  { font-size: 16px; }
   .header-subtitle { display: none; }
-  .header-live  { display: flex; }
+  .header-live  {
+    width: 100%;
+    order: 3;
+    padding: 2px 0 4px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin-top: 4px;
+  }
+  .header-dateline {
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.3px;
+  }
   .header-clock {
     padding: 4px 10px;
-    margin-right: 10px;
+    margin-right: 8px;
     border-radius: 8px;
+    order: 2;
   }
-  .header-clock-time { font-size: 14px; letter-spacing: 2px; }
-  .header-right { gap: 8px; flex-shrink: 0; }
-  .admin-lock-btn { padding: 5px 10px; font-size: 11px; }
+  .header-clock-time { font-size: 13px; letter-spacing: 2px; }
+  .header-right { gap: 7px; flex-shrink: 0; order: 2; }
+  .admin-lock-btn { padding: 5px 9px; font-size: 11px; }
   .admin-lock-btn span:last-child { display: none; }
-  .btn-gold.btn-sm { padding: 6px 10px; font-size: 11px; }
+  .btn-gold.btn-sm { padding: 5px 9px; font-size: 11px; }
 
   /* ── GLOBAL SEARCH BAR ── */
   .global-search-bar { padding: 8px 14px; }
@@ -2032,31 +2046,45 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
 
   /* ── HEADER ── */
   .header-inner {
-    padding: 10px 14px;
-    flex-wrap: nowrap;
+    padding: 8px 14px;
+    flex-wrap: wrap;
     gap: 0;
     align-items: center;
+    row-gap: 4px;
   }
   .header-brand {
-    padding-right: 12px;
+    padding-right: 0;
     margin-right: 0;
     border-right: none;
     flex: 1;
     min-width: 0;
+    order: 1;
   }
   .header-logo  { font-size: 16px; }
   .header-subtitle { display: none; }
-  .header-live  { display: flex; }
+  .header-live  {
+    width: 100%;
+    order: 3;
+    padding: 2px 0 4px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin-top: 4px;
+  }
+  .header-dateline {
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.3px;
+  }
   .header-clock {
     padding: 4px 10px;
-    margin-right: 10px;
+    margin-right: 8px;
     border-radius: 8px;
+    order: 2;
   }
-  .header-clock-time { font-size: 14px; letter-spacing: 2px; }
-  .header-right { gap: 8px; flex-shrink: 0; }
-  .admin-lock-btn { padding: 5px 10px; font-size: 11px; }
+  .header-clock-time { font-size: 13px; letter-spacing: 2px; }
+  .header-right { gap: 7px; flex-shrink: 0; order: 2; }
+  .admin-lock-btn { padding: 5px 9px; font-size: 11px; }
   .admin-lock-btn span:last-child { display: none; }
-  .btn-gold.btn-sm { padding: 6px 10px; font-size: 11px; }
+  .btn-gold.btn-sm { padding: 5px 9px; font-size: 11px; }
 
   /* ── GLOBAL SEARCH BAR ── */
   .global-search-bar { padding: 8px 14px; }
