@@ -2086,7 +2086,7 @@ function openWa(idx) {
   const nextAge = age ? age + 1 : '';
   
   const first = o.name.replace(/^(Shri|Shri\.|Dr\.|Dr|Smt|Smti|Smti\.|Mrs\.|Mr\.|Ms\.|Sri)\s+/i, '').split(',')[0];
-  const msg = `🎂 *Warm Birthday Greetings!*\n\nDear ${o.name},\n\nOn behalf of State Bank of India, LHO Guwahati, I extend our warmest birthday wishes to you on this special occasion.${nextAge ? ` May this ${nextAge}th birthday bring you joy, good health and continued success.` : ''}\n\nYour dedicated service to the nation is truly inspiring. We look forward to continued cooperation and goodwill.\n\nWith regards,\n*Atul Rathi*\nCGM, SBI, LHO, Guwahati`;
+  const msg = `🎂 *Warm Birthday Greetings!*\n\nDear ${o.name},\n\nOn behalf of State Bank of India, LHO Guwahati, I extend our warmest birthday wishes to you on this special occasion.${nextAge ? ` May this ${nextAge}th birthday bring you joy, good health and continued success.` : ''}\n\nYour dedicated service to the nation is truly inspiring. We look forward to continued cooperation and goodwill.\n\nWith regards,\n*Atul Rathi*\nCGM, SBI, LHO, Guwahati\n📞 +91 77109 01201`;
   
   const waUrl = `https://wa.me/91${o.mobile}?text=${encodeURIComponent(msg.replace(/\n/g,'\n'))}`;
   
@@ -2102,7 +2102,8 @@ Your dedicated service to the nation is truly inspiring. We look forward to cont
 
 With regards,
 <strong>Atul Rathi</strong>
-CGM, SBI, LHO, Guwahati</div>
+CGM, SBI, LHO, Guwahati
+📞 +91 77109 01201</div>
     <p style="font-size:12px;color:#aaa">📱 Mobile: +91 ${o.mobile}</p>
   `;
   document.getElementById('waOpenBtn').onclick = () => { window.open(waUrl, '_blank'); closeWaModal(); };
@@ -2759,6 +2760,7 @@ init();
     <span>Chief Manager (Liaison), SBI LHO Guwahati</span>
     <span style="color:rgba(255,255,255,0.25)">|</span>
     <span>NE IAS Officials Tracker v1.0</span>
+
     <span style="color:var(--gold);font-size:15px">&#10022;</span>
   </div>
 </footer>
