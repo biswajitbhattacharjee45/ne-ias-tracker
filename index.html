@@ -2192,7 +2192,6 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
       <div class="header-subtitle">Dignitaries Relationship Manager • Northeast India</div>
     </div>
     <div class="header-live">
-      <div class="header-greeting" id="headerGreeting">Good Morning</div>
       <div class="header-dateline" id="headerDateline">Loading...</div>
     </div>
     <div class="header-clock">
@@ -2770,9 +2769,6 @@ function renderDashboard() {
 
   // ── HERO greeting ──
   const hr = t.getHours();
-  const greeting = hr < 12 ? 'Good Morning' : hr < 17 ? 'Good Afternoon' : 'Good Evening';
-  const el = document.getElementById('headerGreeting');
-  if (el) el.textContent = greeting;
   const dl = document.getElementById('headerDateline');
   if (dl) dl.textContent = t.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) + ' • SBI LHO Guwahati';
 
@@ -2780,13 +2776,11 @@ function renderDashboard() {
   function tickClock() {
     const now = new Date();
     const hr  = now.getHours();
-    const gr  = hr < 12 ? 'Good Morning' : hr < 17 ? 'Good Afternoon' : 'Good Evening';
     const cl  = document.getElementById('headerClock');
     const cs  = document.getElementById('headerClockDate');
     const ge  = document.getElementById('headerGreeting');
     const dl  = document.getElementById('headerDateline');
     if (cl) cl.textContent = now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-    if (ge) ge.textContent = gr;
     if (dl) dl.textContent = now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) + ' • SBI LHO Guwahati';
   }
   tickClock();
