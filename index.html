@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NE Dignitaries Connect — Birthday & Memento Management</title>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<!-- Firebase REST API - no SDK needed -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -2887,32 +2886,108 @@ const PAGE_SIZE = 50;
 let currentTab = 'dashboard';
 let sortDir = {};
 
-// ========== FIREBASE CONFIG ==========
-const firebaseConfig = {
-  apiKey: "AIzaSyDecaBJVER1eZa0cWvk9cRzJARLo8UMH78",
-  authDomain: "ne-dignitaries-connect.firebaseapp.com",
-  projectId: "ne-dignitaries-connect",
-  storageBucket: "ne-dignitaries-connect.firebasestorage.app",
-  messagingSenderId: "1008241660156",
-  appId: "1:1008241660156:web:6efe48863fea9938f3c779"
-};
+// ========== FIREBASE REST API CONFIG ==========
+const FB_PROJECT = 'ne-dignitaries-connect';
+const FB_API_KEY  = 'AIzaSyDecaBJVER1eZa0cWvk9cRzJARLo8UMH78';
+const FB_DOC_URL  = `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents/app/officials`;
+const FB_TOKEN_URL= `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FB_API_KEY}`;
 
-let db;
+let fbToken = null;
 let fbInitialized = false;
 let saveTimeout = null;
+let pollInterval = null;
+let lastKnownTs = 0;
 
 function initFirebase() {
+  setSyncStatus('loading', 'Connecting...');
+  fbInitialized = true;
+  return true;
+}
+
+// Get anonymous token for write access
+async function getFbToken() {
+  if (fbToken) return fbToken;
   try {
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    fbInitialized = true;
-    setSyncStatus('loading', 'Loading from cloud...');
-    return true;
+    const res = await fetch(FB_TOKEN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ returnSecureToken: true })
+    });
+    const data = await res.json();
+    fbToken = data.idToken;
+    return fbToken;
   } catch(e) {
-    console.error('Firebase init failed:', e);
-    setSyncStatus('offline', 'Offline mode');
-    return false;
+    console.warn('Token fetch failed:', e);
+    return null;
   }
+}
+
+// Convert Firestore REST format to plain JS object
+function fromFirestore(doc) {
+  if (!doc.fields) return null;
+  const result = {};
+  for (const [k, v] of Object.entries(doc.fields)) {
+    if (v.stringValue  !== undefined) result[k] = v.stringValue;
+    else if (v.integerValue !== undefined) result[k] = parseInt(v.integerValue);
+    else if (v.doubleValue  !== undefined) result[k] = v.doubleValue;
+    else if (v.booleanValue !== undefined) result[k] = v.booleanValue;
+    else if (v.arrayValue   !== undefined) {
+      result[k] = (v.arrayValue.values || []).map(item => {
+        if (item.mapValue) return fromFirestoreMap(item.mapValue.fields || {});
+        if (item.stringValue  !== undefined) return item.stringValue;
+        if (item.booleanValue !== undefined) return item.booleanValue;
+        if (item.integerValue !== undefined) return parseInt(item.integerValue);
+        return null;
+      });
+    }
+    else if (v.mapValue !== undefined) result[k] = fromFirestoreMap(v.mapValue.fields || {});
+    else result[k] = null;
+  }
+  return result;
+}
+
+function fromFirestoreMap(fields) {
+  const obj = {};
+  for (const [k, v] of Object.entries(fields)) {
+    if (v.stringValue  !== undefined) obj[k] = v.stringValue;
+    else if (v.integerValue !== undefined) obj[k] = parseInt(v.integerValue);
+    else if (v.doubleValue  !== undefined) obj[k] = v.doubleValue;
+    else if (v.booleanValue !== undefined) obj[k] = v.booleanValue;
+    else obj[k] = null;
+  }
+  return obj;
+}
+
+// Convert JS array to Firestore REST format
+function toFirestore(data) {
+  return {
+    fields: {
+      list: {
+        arrayValue: {
+          values: data.map(o => ({
+            mapValue: {
+              fields: {
+                name:      { stringValue:  o.name      || '' },
+                post:      { stringValue:  o.post      || '' },
+                mobile:    { stringValue:  o.mobile    || '' },
+                dob:       { stringValue:  o.dob       || '' },
+                state:     { stringValue:  o.state     || '' },
+                domicile:  { stringValue:  o.domicile  || '' },
+                education: { stringValue:  o.education || '' },
+                giftNote:  { stringValue:  o.giftNote  || '' },
+                brief:     { stringValue:  o.brief     || '' },
+                wikiSummary:{ stringValue: o.wikiSummary || '' },
+                wikiUrl:   { stringValue:  o.wikiUrl   || '' },
+                photo:     { stringValue:  o.photo     || '' },
+                giftSent:  { booleanValue: !!o.giftSent }
+              }
+            }
+          }))
+        }
+      },
+      updatedAt: { integerValue: Date.now().toString() }
+    }
+  };
 }
 
 function setSyncStatus(state, label) {
@@ -2960,74 +3035,86 @@ function init() {
   }
 }
 
-// ========== FIREBASE LOAD ==========
+// ========== FIREBASE LOAD (REST API) ==========
 async function loadFromFirebase() {
   if (!fbInitialized) return;
   try {
-    const doc = await db.collection('app').doc('officials').get();
-    if (doc.exists) {
-      const data = doc.data();
-      if (data.list && data.list.length > 0) {
+    setSyncStatus('loading', 'Loading...');
+    const res = await fetch(FB_DOC_URL + '?key=' + FB_API_KEY);
+    if (res.status === 404) {
+      // First time — push embedded data
+      setSyncStatus('syncing', 'Setting up cloud...');
+      await pushToFirebase();
+      return;
+    }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const doc = await res.json();
+    const data = fromFirestore(doc);
+    if (data && data.list && data.list.length > 0) {
+      const remoteTs = data.updatedAt || 0;
+      if (remoteTs >= lastKnownTs) {
         officials = data.list;
+        lastKnownTs = remoteTs;
         localStorage.setItem('ne_officials_v2', JSON.stringify(officials));
+        localStorage.setItem('ne_officials_ts', remoteTs.toString());
         applyFilters();
         renderDashboard();
         renderCalendar();
         renderGifts();
-        setSyncStatus('synced', 'Synced ✓');
-        console.log('Loaded ' + officials.length + ' officials from Firebase');
-      } else {
-        // First time — push embedded data to Firebase
-        setSyncStatus('syncing', 'Initialising...');
-        await pushToFirebase();
       }
+      setSyncStatus('synced', 'Synced ✓');
     } else {
-      // Document doesn't exist yet — create it
-      setSyncStatus('syncing', 'Setting up...');
+      setSyncStatus('syncing', 'Uploading data...');
       await pushToFirebase();
     }
   } catch(e) {
     console.error('Firebase load error:', e);
     setSyncStatus('offline', 'Using local data');
-    showCloudStatus('⚠️ Could not connect to cloud. Using local data.', 5000);
+    showCloudStatus('⚠️ Using local data — cloud unavailable', 4000);
   }
 }
 
-// ========== REAL-TIME LISTENER ==========
+// ========== POLLING FOR UPDATES (every 30 seconds) ==========
 function listenForUpdates() {
   if (!fbInitialized) return;
-  db.collection('app').doc('officials').onSnapshot(doc => {
-    if (!doc.exists) return;
-    const data = doc.data();
-    if (!data.list) return;
-    // Only update if data is newer than what we have
-    const remoteTs = data.updatedAt || 0;
-    const localTs  = parseInt(localStorage.getItem('ne_officials_ts') || '0');
-    if (remoteTs > localTs) {
-      officials = data.list;
-      localStorage.setItem('ne_officials_v2', JSON.stringify(officials));
-      localStorage.setItem('ne_officials_ts', remoteTs.toString());
-      applyFilters();
-      renderDashboard();
-      renderCalendar();
-      renderGifts();
-      setSyncStatus('synced', 'Synced ✓');
-    }
-  }, err => {
-    console.warn('Snapshot error:', err);
-  });
+  // Poll every 30 seconds for changes from other devices
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(async () => {
+    try {
+      const res = await fetch(FB_DOC_URL + '?key=' + FB_API_KEY + '&fields=fields.updatedAt');
+      if (!res.ok) return;
+      const doc = await res.json();
+      const tsField = doc.fields?.updatedAt?.integerValue;
+      const remoteTs = tsField ? parseInt(tsField) : 0;
+      if (remoteTs > lastKnownTs) {
+        // New data available — load full doc
+        await loadFromFirebase();
+      }
+    } catch(e) { /* silent poll failure */ }
+  }, 30000);
 }
 
-// ========== PUSH TO FIREBASE ==========
+// ========== PUSH TO FIREBASE (REST API) ==========
 async function pushToFirebase() {
   if (!fbInitialized) return false;
   try {
-    const ts = Date.now();
-    await db.collection('app').doc('officials').set({
-      list: officials,
-      updatedAt: ts,
-      count: officials.length
+    const token = await getFbToken();
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    const body = JSON.stringify(toFirestore(officials));
+    const res = await fetch(FB_DOC_URL + '?key=' + FB_API_KEY, {
+      method: 'PATCH',
+      headers,
+      body
     });
+    if (!res.ok) {
+      const err = await res.json();
+      console.error('Push error:', err);
+      setSyncStatus('offline', 'Save failed');
+      return false;
+    }
+    const ts = Date.now();
+    lastKnownTs = ts;
     localStorage.setItem('ne_officials_ts', ts.toString());
     setSyncStatus('synced', 'Saved ✓');
     return true;
