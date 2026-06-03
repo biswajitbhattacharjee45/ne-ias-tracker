@@ -4314,14 +4314,12 @@ function publishToFile() {
 
       // Replace ORIGINAL_DATA with current data so it's baked in
       const origStart = html.indexOf('const ORIGINAL_DATA = ');
-      const origEnd   = html.indexOf(';
-', origStart) + 2;
+      const origEnd   = html.indexOf(';\n', origStart) + 2;
       if (origStart === -1) {
         showToast('Could not locate data block', 'error');
         return;
       }
-      html = html.slice(0, origStart) + 'const ORIGINAL_DATA = ' + currentData + ';
-' + html.slice(origEnd);
+      html = html.slice(0, origStart) + 'const ORIGINAL_DATA = ' + currentData + ';\n' + html.slice(origEnd);
 
       // Also clear localStorage instruction - fresh users get baked data
       // Count photos
