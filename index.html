@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- NE Dignitaries Connect v2.1 BUILD: 20260603 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -34,6 +35,9 @@ body {
   background: var(--cream);
   color: var(--ink);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 15px;
 }
 
 /* HEADER */
@@ -58,26 +62,39 @@ body {
 .header-brand {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding-right: 28px;
-  border-right: 1px solid rgba(255,255,255,0.12);
-  margin-right: 24px;
+  gap: 4px;
+  padding: 8px 18px;
+  margin-right: 20px;
+  background: rgba(201,168,76,0.10);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 12px;
+  box-shadow: 0 0 18px rgba(201,168,76,0.2), inset 0 0 12px rgba(201,168,76,0.06);
   flex-shrink: 0;
+  position: relative;
+}
+.header-brand::before {
+  content: '';
+  position: absolute; inset: -1px;
+  border-radius: 12px;
+  box-shadow: 0 0 22px rgba(201,168,76,0.25);
+  pointer-events: none;
 }
 .header-logo {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
   line-height: 1;
+  color: var(--gold-light);
+  text-shadow: 0 0 14px rgba(201,168,76,0.5), 0 0 28px rgba(201,168,76,0.25);
 }
-.header-logo span { color: var(--gold); }
+.header-logo span { color: white; text-shadow: 0 0 10px rgba(255,255,255,0.4); }
 .header-subtitle {
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 1.8px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.45);
-  font-weight: 500;
+  color: rgba(201,168,76,0.6);
+  font-weight: 600;
 }
 .header-live {
   display: flex;
@@ -1155,14 +1172,13 @@ td {
     row-gap: 4px;
   }
   .header-brand {
-    padding-right: 0;
-    margin-right: 0;
-    border-right: none;
-    flex: 1;
-    min-width: 0;
+    padding: 5px 12px;
+    margin-right: 10px;
+    flex-shrink: 0;
     order: 1;
+    box-shadow: 0 0 10px rgba(201,168,76,0.15);
   }
-  .header-logo  { font-size: 16px; }
+  .header-logo  { font-size: 14px; }
   .header-subtitle { display: none; }
   .header-live  {
     width: 100%;
@@ -1241,9 +1257,26 @@ td {
   .controls-bar { flex-direction: column; gap: 8px; }
   .search-box { min-width: 100%; }
   .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { font-size: 12px; min-width: 700px; }
-  td, th { padding: 9px 10px; }
-  .td-post { max-width: 160px; font-size: 11px; }
+  table { font-size: 13px; min-width: 700px; }
+  td, th { padding: 10px 11px; }
+  .td-post { max-width: 160px; font-size: 12px; }
+  .td-name { font-size: 14px; }
+  .nav-tab { font-size: 12px; }
+  .db-kpi-label { font-size: 11px; }
+  .db-kpi-sub { font-size: 12px; }
+  .db-upcoming-name { font-size: 14px; }
+  .db-upcoming-post { font-size: 12px; }
+  .db-week-name { font-size: 13px; }
+  .db-week-sub { font-size: 12px; }
+  .state-list-name { font-size: 14px; }
+  .state-list-post { font-size: 12px; }
+  .pc-name { font-size: 19px; }
+  .pc-post { font-size: 13px; }
+  .pc-info-value { font-size: 14px; }
+  .pc-info-label { font-size: 11px; }
+  .qe-input { font-size: 14px; }
+  .qe-label { font-size: 11px; }
+  select, input[type="text"], input[type="date"], input[type="tel"], textarea { font-size: 16px !important; }
 
   /* ── STAT-WISE CARDS ── */
   .state-tab-grid { grid-template-columns: 1fr; }
@@ -1278,7 +1311,7 @@ td {
 
 /* Very small phones */
 @media (max-width: 380px) {
-  .header-logo { font-size: 14px; }
+  .header-logo { font-size: 13px; }
   .header-clock-time { font-size: 12px; letter-spacing: 1px; }
   .db-kpi-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .db-kpi-num { font-size: 24px; }
@@ -1659,6 +1692,73 @@ body.view-mode .admin-only-cell { opacity: 0.25; pointer-events: none; }
 
 
 
+
+
+/* CUSTOM REFERENCE LINK */
+.pc-ref-link-wrap {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.pc-ref-link-input {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.pc-ref-link-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
+.pc-ref-link-input::placeholder { color: #ccc; }
+.pc-ref-link-open {
+  background: var(--blue);
+  color: white;
+  border: none;
+  border-radius: 9px;
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+  transition: background 0.15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.pc-ref-link-open:hover { background: #1a6fa8; }
+.pc-ref-link-open.disabled { background: #ccc; pointer-events: none; }
+.pc-ref-saved-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0f8ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 9px;
+  padding: 8px 12px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+.pc-ref-saved-link a {
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 600;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pc-ref-saved-link a:hover { text-decoration: underline; }
+.pc-ref-clear {
+  background: none; border: none; color: #bbb; cursor: pointer;
+  font-size: 14px; padding: 2px 4px; flex-shrink: 0;
+}
+.pc-ref-clear:hover { color: var(--red); }
 
 /* ===== PROFILE CARD MODAL ===== */
 .profile-overlay {
@@ -2206,14 +2306,13 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
     row-gap: 4px;
   }
   .header-brand {
-    padding-right: 0;
-    margin-right: 0;
-    border-right: none;
-    flex: 1;
-    min-width: 0;
+    padding: 5px 12px;
+    margin-right: 10px;
+    flex-shrink: 0;
     order: 1;
+    box-shadow: 0 0 10px rgba(201,168,76,0.15);
   }
-  .header-logo  { font-size: 16px; }
+  .header-logo  { font-size: 14px; }
   .header-subtitle { display: none; }
   .header-live  {
     width: 100%;
@@ -2292,9 +2391,26 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
   .controls-bar { flex-direction: column; gap: 8px; }
   .search-box { min-width: 100%; }
   .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { font-size: 12px; min-width: 700px; }
-  td, th { padding: 9px 10px; }
-  .td-post { max-width: 160px; font-size: 11px; }
+  table { font-size: 13px; min-width: 700px; }
+  td, th { padding: 10px 11px; }
+  .td-post { max-width: 160px; font-size: 12px; }
+  .td-name { font-size: 14px; }
+  .nav-tab { font-size: 12px; }
+  .db-kpi-label { font-size: 11px; }
+  .db-kpi-sub { font-size: 12px; }
+  .db-upcoming-name { font-size: 14px; }
+  .db-upcoming-post { font-size: 12px; }
+  .db-week-name { font-size: 13px; }
+  .db-week-sub { font-size: 12px; }
+  .state-list-name { font-size: 14px; }
+  .state-list-post { font-size: 12px; }
+  .pc-name { font-size: 19px; }
+  .pc-post { font-size: 13px; }
+  .pc-info-value { font-size: 14px; }
+  .pc-info-label { font-size: 11px; }
+  .qe-input { font-size: 14px; }
+  .qe-label { font-size: 11px; }
+  select, input[type="text"], input[type="date"], input[type="tel"], textarea { font-size: 16px !important; }
 
   /* ── STAT-WISE CARDS ── */
   .state-tab-grid { grid-template-columns: 1fr; }
@@ -2329,7 +2445,7 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
 
 /* Very small phones */
 @media (max-width: 380px) {
-  .header-logo { font-size: 14px; }
+  .header-logo { font-size: 13px; }
   .header-clock-time { font-size: 12px; letter-spacing: 1px; }
   .db-kpi-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .db-kpi-num { font-size: 24px; }
@@ -2764,10 +2880,19 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
       <div class="pc-grid" id="pcInfoGrid"></div>
 
       <!-- Wikipedia Section -->
-      <div class="pc-section-title"><span class="icon">📖</span> Wikipedia Brief
-        <button class="btn-fetch-wiki" id="wikiFetchBtn" onclick="fetchWiki()">🔍 Fetch from Wikipedia</button>
+      <div class="pc-section-title"><span class="icon">📖</span> Reference & Wikipedia
+        <button class="btn-fetch-wiki admin-only" id="wikiFetchBtn" onclick="fetchWiki()">🔍 Fetch Wikipedia</button>
       </div>
-      <div class="pc-wiki-box empty" id="pcWikiBox">No Wikipedia data fetched yet. Click "Fetch from Wikipedia" to search.</div>
+      <div class="pc-wiki-box empty" id="pcWikiBox">No Wikipedia data fetched yet. Click "Fetch Wikipedia" to search.</div>
+      <!-- Custom reference link (shown when wiki not available) -->
+      <div id="pcRefLinkSection" style="margin-top:10px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#bbb;margin-bottom:6px">🔗 Reference Link <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#ccc;font-size:10px">(paste any page link about this official)</span></div>
+        <div class="pc-ref-link-wrap admin-only">
+          <input class="pc-ref-link-input" type="url" id="pcRefLinkInput" placeholder="https://... paste link here" oninput="onRefLinkInput(this.value)">
+          <button class="pc-ref-link-open disabled" id="pcRefLinkOpenBtn" onclick="openRefLink()">↗ Open</button>
+        </div>
+        <div id="pcRefLinkSaved" style="display:none"></div>
+      </div>
 
       <!-- Personal Notes / Brief -->
       <div class="pc-section-title"><span class="icon">📝</span> Personal Notes & Brief</div>
@@ -2978,6 +3103,7 @@ function toFirestore(data) {
                 brief:     { stringValue:  o.brief     || '' },
                 wikiSummary:{ stringValue: o.wikiSummary || '' },
                 wikiUrl:   { stringValue:  o.wikiUrl   || '' },
+                refLink:   { stringValue:  o.refLink   || '' },
                 photo:     { stringValue:  o.photo     || '' },
                 giftSent:  { booleanValue: !!o.giftSent }
               }
@@ -3970,7 +4096,25 @@ function openProfile(idx) {
     wb.className = 'pc-wiki-box empty';
     wb.innerHTML = 'No Wikipedia data fetched yet. Click "Fetch from Wikipedia" to search.';
   }
-  document.getElementById('wikiFetchBtn').textContent = o.wikiSummary ? '🔄 Refresh Wikipedia' : '🔍 Fetch from Wikipedia';
+  document.getElementById('wikiFetchBtn').textContent = o.wikiSummary ? '🔄 Refresh' : '🔍 Fetch Wikipedia';
+
+  // Load reference link
+  const refInput = document.getElementById('pcRefLinkInput');
+  const refSaved = document.getElementById('pcRefLinkSaved');
+  const refOpenBtn = document.getElementById('pcRefLinkOpenBtn');
+  if (refInput) refInput.value = '';
+  if (refSaved) {
+    if (o.refLink) {
+      refSaved.style.display = 'flex';
+      refSaved.innerHTML = `<div class="pc-ref-saved-link">
+        🔗 <a href="${escHtml(o.refLink)}" target="_blank">${escHtml(o.refLink.length > 60 ? o.refLink.slice(0,60)+'…' : o.refLink)}</a>
+        <button class="pc-ref-clear admin-only" onclick="clearRefLink()" title="Remove link">✕</button>
+      </div>`;
+    } else {
+      refSaved.style.display = 'none';
+      refSaved.innerHTML = '';
+    }
+  }
 
   // Brief / Notes
   document.getElementById('pcBrief').value = o.brief || '';
@@ -4005,6 +4149,9 @@ function saveProfile() {
   const o = officials[currentProfileIdx];
   o.brief    = document.getElementById('pcBrief').value.trim();
   o.giftNote = document.getElementById('pcGiftNote').value.trim();
+  // Save ref link if entered
+  const newRef = document.getElementById('pcRefLinkInput')?.value.trim();
+  if (newRef) o.refLink = newRef;
   save();
   showToast('✅ Profile saved!', 'success');
   closeProfile();
@@ -4353,6 +4500,29 @@ function publishToFile() {
   }, 300);
 }
 
+
+// ========== REFERENCE LINK ==========
+function onRefLinkInput(val) {
+  const btn = document.getElementById('pcRefLinkOpenBtn');
+  if (!btn) return;
+  const isValid = val.trim().startsWith('http');
+  btn.classList.toggle('disabled', !isValid);
+}
+
+function openRefLink() {
+  const val = document.getElementById('pcRefLinkInput')?.value.trim();
+  if (val && val.startsWith('http')) window.open(val, '_blank');
+}
+
+function clearRefLink() {
+  if (currentProfileIdx < 0) return;
+  officials[currentProfileIdx].refLink = '';
+  save();
+  const refSaved = document.getElementById('pcRefLinkSaved');
+  if (refSaved) { refSaved.style.display = 'none'; refSaved.innerHTML = ''; }
+  showToast('Reference link removed');
+}
+
 // ========== PHOTO LIGHTBOX ==========
 function openPhotoLightbox(src, name) {
   const lb = document.getElementById('photoLightbox');
@@ -4620,7 +4790,7 @@ init();
     <span style="color:rgba(255,255,255,0.25)">|</span>
     <span>Chief Manager (Liaison), SBI LHO Guwahati</span>
     <span style="color:rgba(255,255,255,0.25)">|</span>
-    <span>NE Dignitaries Connect v1.0</span>
+    <span>NE Dignitaries Connect v2.1</span>
 
     <span style="color:var(--gold);font-size:15px">&#10022;</span>
   </div>
