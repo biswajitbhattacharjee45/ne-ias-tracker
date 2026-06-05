@@ -2911,7 +2911,7 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
       <!-- Action Buttons -->
       <div class="pc-actions">
         <button class="btn btn-outline" onclick="closeProfile()">Close</button>
-        <button class="btn btn-quick-edit admin-only" onclick="closeProfile();openQePanel(currentProfileIdx)" style="flex:1">✏️ Edit Details</button>
+        <button class="btn btn-quick-edit admin-only" onclick="openQePanelFromProfile()" style="flex:1">✏️ Edit Details</button>
         <button class="btn btn-gold admin-only" onclick="saveProfile()" style="flex:1.5">💾 Save Profile</button>
         <button id="pcWaBtn" class="whatsapp-btn" style="padding:10px 16px;font-size:13px" onclick="openWaFromProfile()">💬 WhatsApp</button>
       </div>
@@ -2925,19 +2925,24 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
 <div class="qe-panel" id="qePanel">
   <div class="qe-header" style="position:relative">
     <div class="qe-header-title" id="qePanelTitle">Edit Official</div>
-    <div class="qe-header-sub" id="qePanelSub">QUICK CORRECTION PANEL</div>
+    <div class="qe-header-sub" id="qePanelSub">DETAILS EDITOR</div>
     <button class="qe-close" onclick="closeQePanel()">✕</button>
   </div>
   <div class="qe-body">
     <input type="hidden" id="qeIdx">
 
+    <!-- MISSING FIELDS ALERT -->
+    <div id="qeMissingAlert" style="display:none;background:#fff8ed;border:1px solid #ffe0b2;border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#b45309">
+      <strong>⚠️ Missing fields detected:</strong> <span id="qeMissingList"></span>
+    </div>
+
     <div class="qe-section-label">Identity</div>
     <div class="qe-field">
-      <div class="qe-label">Full Name</div>
+      <div class="qe-label">Full Name *</div>
       <input class="qe-input" type="text" id="qeName" placeholder="Shri / Dr. / Smt. ...">
     </div>
     <div class="qe-field">
-      <div class="qe-label">State</div>
+      <div class="qe-label">State *</div>
       <select class="qe-input" id="qeState">
         <option value="ASSAM">Assam</option>
         <option value="ARUNACHAL PRADESH">Arunachal Pradesh</option>
@@ -2948,6 +2953,10 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
         <option value="MIZORAM">Mizoram</option>
         <option value="SIKKIM">Sikkim</option>
       </select>
+    </div>
+    <div class="qe-field">
+      <div class="qe-label">Organisation / Cadre</div>
+      <input class="qe-input" type="text" id="qeOrg" placeholder="IAS, IPS, IFS, RBI, Railways...">
     </div>
 
     <div class="qe-section-label">Official Details</div>
@@ -2963,36 +2972,66 @@ tr.editing-row { background: #fffcf0 !important; outline: 2px solid var(--gold);
       <div class="qe-label">Educational Qualification</div>
       <input class="qe-input" type="text" id="qeEducation" placeholder="B.Tech, MBBS, MA...">
     </div>
-
-    <div class="qe-section-label">Contact & Birthday</div>
     <div class="qe-field">
-      <div class="qe-label">Mobile Number <span id="qeMobileFlag"></span></div>
-      <input class="qe-input" type="tel" id="qeMobile" placeholder="10-digit mobile number">
+      <div class="qe-label">Batch / Year</div>
+      <input class="qe-input" type="text" id="qeBatch" placeholder="e.g. 1995 batch, 2003 batch...">
+    </div>
+
+    <div class="qe-section-label">Contact Details <span id="qeMobileFlag"></span></div>
+    <div class="qe-field">
+      <div class="qe-label">Mobile Number</div>
+      <input class="qe-input" type="tel" id="qeMobile" placeholder="10-digit mobile number" maxlength="10">
     </div>
     <div class="qe-field">
-      <div class="qe-label">Date of Birth <span id="qeDobFlag"></span></div>
+      <div class="qe-label">WhatsApp Number <small style="color:#aaa;font-weight:400">(if different from mobile)</small></div>
+      <input class="qe-input" type="tel" id="qeWhatsapp" placeholder="Leave blank if same as mobile">
+    </div>
+    <div class="qe-field">
+      <div class="qe-label">Email Address</div>
+      <input class="qe-input" type="email" id="qeEmail" placeholder="official@ias.gov.in">
+    </div>
+    <div class="qe-field">
+      <div class="qe-label">Office Address</div>
+      <input class="qe-input" type="text" id="qeAddress" placeholder="Secretariat, Dispur, Guwahati...">
+    </div>
+
+    <div class="qe-section-label">Birthday <span id="qeDobFlag"></span></div>
+    <div class="qe-field">
+      <div class="qe-label">Date of Birth</div>
       <input class="qe-input" type="date" id="qeDob">
     </div>
-
-    <div class="qe-section-label">Gift Tracking</div>
     <div class="qe-field">
-      <div class="qe-label">Gift Status</div>
+      <div class="qe-label">Spouse / Partner Name <small style="color:#aaa;font-weight:400">(for joint greeting)</small></div>
+      <input class="qe-input" type="text" id="qeSpouse" placeholder="Spouse name if greeting is to be sent">
+    </div>
+    <div class="qe-field">
+      <div class="qe-label">Spouse DOB</div>
+      <input class="qe-input" type="date" id="qeSpouseDob">
+    </div>
+
+    <div class="qe-section-label">Memento Tracking</div>
+    <div class="qe-field">
+      <div class="qe-label">Memento Status</div>
       <select class="qe-input" id="qeGiftSent">
         <option value="false">⏳ Pending</option>
-        <option value="true">✅ Gift Sent</option>
+        <option value="true">✅ Memento Sent</option>
       </select>
     </div>
     <div class="qe-field">
-      <div class="qe-label">Gift Note / Remarks</div>
+      <div class="qe-label">Memento Note / Remarks</div>
       <input class="qe-input" type="text" id="qeGiftNote" placeholder="e.g. Assam silk sent via Blue Dart on 5 Jan">
+    </div>
+    <div class="qe-field">
+      <div class="qe-label">Personal Notes / Brief</div>
+      <textarea class="qe-input qe-textarea" id="qeBrief" placeholder="Background, interests, past postings, any other notes..."></textarea>
     </div>
 
     <div style="height:8px"></div>
   </div>
   <div class="qe-footer">
-    <button class="btn btn-danger admin-only" style="flex:0 0 auto;padding:10px 14px;font-size:12px" onclick="deleteFromQe()">🗑 Delete</button>
+    <button class="btn btn-danger admin-only" style="flex:0 0 auto;padding:10px 14px;font-size:12px" onclick="deleteFromQe()">🗑</button>
     <button class="btn btn-outline" style="flex:1" onclick="closeQePanel()">Cancel</button>
-    <button class="btn btn-gold admin-only" style="flex:1.5" onclick="saveFromQe()">💾 Save Changes</button>
+    <button class="btn btn-gold admin-only" style="flex:1.5" onclick="saveFromQe()">💾 Save</button>
   </div>
 </div>
 
@@ -4655,23 +4694,47 @@ function openQePanel(idx) {
   const o = officials[idx];
   document.getElementById('qeIdx').value = idx;
   document.getElementById('qePanelTitle').textContent = o.name;
-  document.getElementById('qePanelSub').textContent = (o.state || '') + ' • QUICK CORRECTION PANEL';
+  document.getElementById('qePanelSub').textContent = (o.state || '') + ' • DETAILS EDITOR';
 
-  document.getElementById('qeName').value = o.name || '';
-  document.getElementById('qeState').value = o.state || 'ASSAM';
-  document.getElementById('qePost').value = o.post || '';
-  document.getElementById('qeDomicile').value = o.domicile || '';
-  document.getElementById('qeEducation').value = o.education || '';
-  document.getElementById('qeMobile').value = o.mobile || '';
-  document.getElementById('qeDob').value = o.dob || '';
-  document.getElementById('qeGiftSent').value = o.giftSent ? 'true' : 'false';
-  document.getElementById('qeGiftNote').value = o.giftNote || '';
+  // Load all fields
+  document.getElementById('qeName').value        = o.name        || '';
+  document.getElementById('qeState').value       = o.state       || 'ASSAM';
+  document.getElementById('qePost').value        = o.post        || '';
+  document.getElementById('qeDomicile').value    = o.domicile    || '';
+  document.getElementById('qeEducation').value   = o.education   || '';
+  document.getElementById('qeMobile').value      = o.mobile      || '';
+  document.getElementById('qeDob').value         = o.dob         || '';
+  document.getElementById('qeGiftSent').value    = o.giftSent ? 'true' : 'false';
+  document.getElementById('qeGiftNote').value    = o.giftNote    || '';
+  document.getElementById('qeOrg').value         = o.org         || '';
+  document.getElementById('qeBatch').value       = o.batch       || '';
+  document.getElementById('qeWhatsapp').value    = o.whatsapp    || '';
+  document.getElementById('qeEmail').value       = o.email       || '';
+  document.getElementById('qeAddress').value     = o.address     || '';
+  document.getElementById('qeSpouse').value      = o.spouse      || '';
+  document.getElementById('qeSpouseDob').value   = o.spouseDob   || '';
+  document.getElementById('qeBrief').value       = o.brief       || '';
 
   // Flag missing fields
+  const missing = [];
+  if (!o.mobile)  missing.push('Mobile');
+  if (!o.dob)     missing.push('Date of Birth');
+  if (!o.email)   missing.push('Email');
+  if (!o.post)    missing.push('Present Post');
   document.getElementById('qeMobileFlag').innerHTML = !o.mobile ? '<span class="flag-missing">⚠ Missing</span>' : '';
-  document.getElementById('qeDobFlag').innerHTML = !o.dob ? '<span class="flag-missing">⚠ Missing</span>' : '';
+  document.getElementById('qeDobFlag').innerHTML    = !o.dob    ? '<span class="flag-missing">⚠ Missing</span>' : '';
+  const alertEl = document.getElementById('qeMissingAlert');
+  const listEl  = document.getElementById('qeMissingList');
+  if (alertEl && listEl) {
+    if (missing.length > 0) {
+      alertEl.style.display = 'block';
+      listEl.textContent = missing.join(', ');
+    } else {
+      alertEl.style.display = 'none';
+    }
+  }
 
-  // Highlight the row
+  // Highlight the row in table if visible
   document.querySelectorAll('tr.editing-row').forEach(r => r.classList.remove('editing-row'));
   const rows = document.querySelectorAll('#tableBody tr');
   const start = (currentPage - 1) * PAGE_SIZE;
@@ -4681,6 +4744,15 @@ function openQePanel(idx) {
   document.getElementById('qeOverlay').classList.add('open');
   document.getElementById('qePanel').classList.add('open');
   setTimeout(() => document.getElementById('qeName').focus(), 350);
+}
+
+// ── Open QE panel FROM profile (keep profile idx, reopen after save) ──
+let qeFromProfile = false;
+function openQePanelFromProfile() {
+  if (currentProfileIdx < 0) return;
+  qeFromProfile = true;
+  // Don't close profile — just open QE panel on top
+  openQePanel(currentProfileIdx);
 }
 
 function closeQePanel() {
@@ -4700,20 +4772,30 @@ function saveFromQe() {
   officials[idx] = {
     ...officials[idx],
     name,
-    state: document.getElementById('qeState').value,
-    post: document.getElementById('qePost').value.trim(),
-    domicile: document.getElementById('qeDomicile').value.trim(),
-    education: document.getElementById('qeEducation').value.trim(),
+    state:      document.getElementById('qeState').value,
+    post:       document.getElementById('qePost').value.trim(),
+    domicile:   document.getElementById('qeDomicile').value.trim(),
+    education:  document.getElementById('qeEducation').value.trim(),
     mobile,
-    dob: document.getElementById('qeDob').value || '',
-    giftSent: document.getElementById('qeGiftSent').value === 'true',
-    giftNote: document.getElementById('qeGiftNote').value.trim(),
+    dob:        document.getElementById('qeDob').value || '',
+    giftSent:   document.getElementById('qeGiftSent').value === 'true',
+    giftNote:   document.getElementById('qeGiftNote').value.trim(),
+    org:        document.getElementById('qeOrg').value.trim(),
+    batch:      document.getElementById('qeBatch').value.trim(),
+    whatsapp:   document.getElementById('qeWhatsapp').value.replace(/[^0-9]/g,'').slice(-10),
+    email:      document.getElementById('qeEmail').value.trim(),
+    address:    document.getElementById('qeAddress').value.trim(),
+    spouse:     document.getElementById('qeSpouse').value.trim(),
+    spouseDob:  document.getElementById('qeSpouseDob').value || '',
+    brief:      document.getElementById('qeBrief').value.trim(),
   };
 
   // update missing flags live
   document.getElementById('qeMobileFlag').innerHTML = !mobile ? '<span class="flag-missing">⚠ Missing</span>' : '';
   document.getElementById('qeDobFlag').innerHTML = !officials[idx].dob ? '<span class="flag-missing">⚠ Missing</span>' : '';
   document.getElementById('qePanelTitle').textContent = name;
+  const alertEl = document.getElementById('qeMissingAlert');
+  if (alertEl) alertEl.style.display = 'none';
 
   save();
   showToast('✅ ' + name + ' updated!', 'success');
@@ -4722,6 +4804,12 @@ function saveFromQe() {
   renderCalendar();
   renderGifts();
   closeQePanel();
+  // If opened from profile card, reopen it with fresh data
+  if (qeFromProfile) {
+    qeFromProfile = false;
+    const newIdx = parseInt(document.getElementById('qeIdx').value);
+    setTimeout(() => openProfile(newIdx), 200);
+  }
 }
 
 function deleteFromQe() {
