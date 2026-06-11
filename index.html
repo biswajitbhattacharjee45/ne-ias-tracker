@@ -668,6 +668,7 @@ body.vm .ao-cell{opacity:.25;pointer-events:none;}
             <button class="qa-btn" onclick="showTab('calendar')">📅 Calendar</button>
             <button class="qa-btn" onclick="showTab('crm')">🤝 CRM</button>
             <button class="qa-btn" onclick="showTab('greetlog')">📖 Greet Log</button>
+            <button class="qa-btn" onclick="showTab('reports')">📅 Birthday PDF</button>
             <button class="qa-btn full admin-only" onclick="openAddModal()">+ Add Official</button>
           </div>
         </div>
@@ -988,14 +989,15 @@ function daysTo(dob){
 function age(dob){
   if(!dob)return null;
   const d=new Date(dob),t=td();
+  if(d.getFullYear()<=1910)return null; // placeholder year (1901 = year of birth not received)
   let a=t.getFullYear()-d.getFullYear();
   if(new Date(t.getFullYear(),d.getMonth(),d.getDate())>t)a--;
   return a;
 }
-function fmtDob(dob){if(!dob)return '\u2014';return new Date(dob).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtDob(dob){if(!dob)return '\u2014';const d=new Date(dob);if(d.getFullYear()<=1910)return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+' (yr n/a)';return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
 function stSh(s){if(s==='ARUNACHAL PRADESH')return'ARUNACHAL';return s;}
 function stPillCls(s){if(s==='ASSAM')return'sp-ASSAM';if(s==='ARUNACHAL PRADESH')return'sp-ARP';if(s==='TRIPURA')return'sp-TRP';return'sp-OTH';}
-function retYear(dob){if(!dob)return null;const d=new Date(dob);return d.getFullYear()+60;}
+function retYear(dob){if(!dob)return null;const d=new Date(dob);if(d.getFullYear()<=1910)return null;return d.getFullYear()+60;}
 function ini(name){return(name||'').replace(/^(Shri|Dr\.|Dr|Smt|Smti|Mrs\.|Mr\.|Ms\.|Sri)\.?\s+/i,'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();}
 function esc(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
@@ -1043,6 +1045,7 @@ function renderDB(){
     {ic:'\ud83c\udf81',n:gSent,lb:'Mementos Sent',sb:(officials.length-gSent)+' pending',ac:'#27ae60',pulse:false},
     {ic:'\ud83d\udcf1',n:officials.filter(o=>o.mobile).length,lb:'With Mobile',sb:officials.filter(o=>o.email).length+' with email',ac:'#25D366',pulse:false},
     {ic:'\ud83e\udd1d',n:totMeet,lb:'Meetings Logged',sb:'Total interactions',ac:'#8e44ad',pulse:false},
+    {ic:'\ud83d\udcdd',n:officials.filter(o=>o.dob&&new Date(o.dob).getFullYear()<=1910).length,lb:'Year of Birth Pending',sb:'Day/month known \u00b7 year awaited',ac:'#e67e22',pulse:false},
     {ic:'\u2b50',n:hiScore,lb:'High Score (70+)',sb:'Strong relationships',ac:'#c9a84c',pulse:false},
   ];
   const kg=document.getElementById('kpiGrid');
@@ -1065,7 +1068,7 @@ function renderDB(){
       <div class="bday-chips">${bdT.map(o=>{const idx=officials.indexOf(o);const i=ini(o.name);const av=o.photo?`<img src="${o.photo}" alt="">`:i;
         return`<div class="chip" onclick="openProf(${idx})">
           <div class="chip-av">${o.photo?`<img src="${o.photo}" alt="">`:`<span style="font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.6)">${i}</span>`}</div>
-          <div><div class="chip-nm">${esc(o.name)}</div><div class="chip-info">${stSh(o.state||'')} \u00b7 Turns ${(age(o.dob)||0)+1}</div></div>
+          <div><div class="chip-nm">${esc(o.name)}</div><div class="chip-info">${stSh(o.state||'')} \u00b7 ${age(o.dob)!==null?'Turns '+(age(o.dob)+1):'\ud83c\udf82 Birthday'}</div></div>
           ${o.mobile?`<button class="btn-wa" onclick="event.stopPropagation();openWa(${idx})">\ud83d\udcac</button>`:''}
         </div>`;}).join('')}</div>`;
     }else{ba.classList.remove('show');}
@@ -1122,7 +1125,7 @@ function renderDB(){
     wk.map(o=>{const c=o.d===0?'#c0392b':o.d<=3?'#e67e22':'#2980b9';const tag=o.d===0?'TODAY':o.d===1?'TOMORROW':o.d+'d';
       return`<div class="wk-item" onclick="openProf(${o.idx})">
         <div class="wk-dot" style="background:${c}"></div>
-        <div style="flex:1;min-width:0"><div class="wk-nm">${esc(o.name)}</div><div class="wk-sb">${fmtDob(o.dob)} \u00b7 Age ${(age(o.dob)||0)+1}</div></div>
+        <div style="flex:1;min-width:0"><div class="wk-nm">${esc(o.name)}</div><div class="wk-sb">${fmtDob(o.dob)}${age(o.dob)!==null?' \u00b7 Age '+(age(o.dob)+1):''}</div></div>
         <span class="wk-d" style="background:${c}22;color:${c}">${tag}</span>
       </div>`;}).join('');
 
@@ -1239,7 +1242,7 @@ function renderCal(){
             <td class="td-nm"><span class="nm-link" onclick="openProf(${o.idx})">${esc(o.name)}</span></td>
             <td style="font-size:11px;color:#666;max-width:180px">${esc((o.post||'').slice(0,45))}</td>
             <td><span class="sp ${stPillCls(o.state||'')}">${stSh(o.state||'')}</span></td>
-            <td style="font-size:12px;color:#888">${age(o.dob)}y</td>
+            <td style="font-size:12px;color:#888">${age(o.dob)!==null?age(o.dob)+'y':'\u2014'}</td>
             <td>${o.mobile?`<a href="tel:+91${o.mobile}" style="color:var(--blue);font-size:12px">${o.mobile}</a>`:'—'}</td>
             <td>${o.mobile?`<button class="wa-ic" onclick="openWa(${o.idx})">\ud83d\udcac</button>`:''}</td>
           </tr>`;}).join('')}</tbody>
@@ -1412,7 +1415,7 @@ function renderGL(){
             ${list.map(o=>{const idx=officials.indexOf(o);const greeted=(o.greetings||{})[y];
               return`<div class="gl-item">
                 <div style="width:7px;height:7px;border-radius:50%;background:${greeted?'var(--green)':'var(--red)'};flex-shrink:0"></div>
-                <div class="gl-nm"><span class="nm-link" onclick="openProf(${idx})">${esc(o.name)}</span><div style="font-size:11px;color:#aaa">${fmtDob(o.dob)} \u00b7 Turns ${(age(o.dob)||0)+1} in ${y}</div></div>
+                <div class="gl-nm"><span class="nm-link" onclick="openProf(${idx})">${esc(o.name)}</span><div style="font-size:11px;color:#aaa">${fmtDob(o.dob)}${age(o.dob)!==null?' \u00b7 Turns '+(age(o.dob)+1)+' in '+y:''}</div></div>
                 <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px" class="${greeted?'gy-y':'gy-n'}">${greeted?'\u2713 Greeted':'Not yet'}</span>
                 <button class="btn btn-out btn-sm admin-only" onclick="tglGreet(${idx},${y})" style="font-size:11px;padding:3px 9px">${greeted?'Unmark':'\u2713 Mark'}</button>
               </div>`;}).join('')}
@@ -1428,6 +1431,30 @@ function renderReports(){
   const cc=document.getElementById('rptContent');if(!cc)return;
   cc.innerHTML=`<div class="ptitle" style="font-size:19px;font-family:'Cormorant Garamond',serif;margin-bottom:18px">\ud83d\udcc4 Reports & Directories</div>
   <div class="rpt-grid">
+    <div class="rpt-card" style="grid-column:1/-1;border:2px solid var(--gold);background:linear-gradient(135deg,#fffdf5,#fff9e8)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><div class="rpt-ic" style="margin:0">\ud83d\udcc5</div><div><div class="rpt-title" style="margin:0">Birthday Calendar \u2014 Month-wise & State-wise <span style="font-size:10px;background:var(--gold);color:white;border-radius:10px;padding:2px 8px;vertical-align:middle">CUSTOMIZABLE</span></div>
+      <div class="rpt-desc" style="margin:2px 0 0">Premium annual calendar grouped by month, then state. Officials without recorded birthdays are excluded automatically.</div></div></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:12px">
+        <div><label style="font-size:10px;font-weight:700;letter-spacing:.8px;color:#9a7b2e">REPORT TITLE</label>
+          <input id="rcTitle" value="Birthday Calendar of Dignitaries" style="width:100%;margin-top:4px;padding:7px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif"></div>
+        <div><label style="font-size:10px;font-weight:700;letter-spacing:.8px;color:#9a7b2e">FROM MONTH</label>
+          <select id="rcFrom" style="width:100%;margin-top:4px;padding:7px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif">${MONTHS.map((m,i)=>`<option value="${i}" ${i===0?'selected':''}>${m}</option>`).join('')}</select></div>
+        <div><label style="font-size:10px;font-weight:700;letter-spacing:.8px;color:#9a7b2e">TO MONTH</label>
+          <select id="rcTo" style="width:100%;margin-top:4px;padding:7px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif">${MONTHS.map((m,i)=>`<option value="${i}" ${i===11?'selected':''}>${m}</option>`).join('')}</select></div>
+      </div>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:12px">
+        <div><div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:#9a7b2e;margin-bottom:5px">STATES</div>
+          <label style="font-size:12px;margin-right:12px"><input type="checkbox" id="rcStA" checked> Assam</label>
+          <label style="font-size:12px;margin-right:12px"><input type="checkbox" id="rcStR" checked> Arunachal</label>
+          <label style="font-size:12px"><input type="checkbox" id="rcStT" checked> Tripura</label></div>
+        <div><div style="font-size:10px;font-weight:700;letter-spacing:.8px;color:#9a7b2e;margin-bottom:5px">OPTIONAL COLUMNS</div>
+          <label style="font-size:12px;margin-right:12px"><input type="checkbox" id="rcAge" checked> Turning Age</label>
+          <label style="font-size:12px;margin-right:12px"><input type="checkbox" id="rcMob"> Mobile</label>
+          <label style="font-size:12px;margin-right:12px"><input type="checkbox" id="rcRet"> Retirement Yr</label>
+          <label style="font-size:12px"><input type="checkbox" id="rcGift"> Memento Status</label></div>
+      </div>
+      <button class="rpt-btn" style="margin-top:14px" onclick="genCalRpt()">\ud83d\udcc4 Generate Birthday Calendar PDF</button>
+    </div>
     <div class="rpt-card"><div class="rpt-ic">\ud83c\udf82</div><div class="rpt-title">Monthly Birthday Report</div>
       <div class="rpt-desc">All officials with birthdays in a selected month.</div>
       <select id="rptMon" style="margin-top:8px;width:100%;padding:7px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif">
@@ -1455,6 +1482,95 @@ function renderReports(){
 
 
 // ── REPORT GENERATORS ──
+function genCalRpt(){
+  const title=esc(document.getElementById('rcTitle').value||'Birthday Calendar of Dignitaries');
+  const mF=parseInt(document.getElementById('rcFrom').value),mT=parseInt(document.getElementById('rcTo').value);
+  const stSel=[];
+  if(document.getElementById('rcStA').checked)stSel.push('ASSAM');
+  if(document.getElementById('rcStR').checked)stSel.push('ARUNACHAL PRADESH');
+  if(document.getElementById('rcStT').checked)stSel.push('TRIPURA');
+  if(!stSel.length){showToast('Select at least one state','error');return;}
+  const showAge=document.getElementById('rcAge').checked,showMob=document.getElementById('rcMob').checked,
+        showRet=document.getElementById('rcRet').checked,showGift=document.getElementById('rcGift').checked;
+  // build month sequence (supports wrap e.g. Nov→Feb)
+  const mSeq=[];if(mF<=mT){for(let i=mF;i<=mT;i++)mSeq.push(i);}else{for(let i=mF;i<=11;i++)mSeq.push(i);for(let i=0;i<=mT;i++)mSeq.push(i);}
+  const pool=officials.filter(o=>o.dob&&stSel.includes(o.state));
+  const byMonth={};pool.forEach(o=>{const m=new Date(o.dob).getMonth();if(!byMonth[m])byMonth[m]=[];byMonth[m].push(o);});
+  const total=mSeq.reduce((n,m)=>n+(byMonth[m]?byMonth[m].length:0),0);
+  if(!total){showToast('No birthdays found for selected months/states','error');return;}
+  const ord=(d)=>{const day=d.getDate();const s=(day>=11&&day<=13)?'th':({1:'st',2:'nd',3:'rd'}[day%10]||'th');return day+s;};
+  const stCount={};pool.forEach(o=>{if(byMonthHas(o))stCount[o.state]=(stCount[o.state]||0)+1;});
+  function byMonthHas(o){return mSeq.includes(new Date(o.dob).getMonth());}
+  let cols=3;if(showAge)cols++;if(showMob)cols++;if(showRet)cols++;if(showGift)cols++;
+  const sections=mSeq.map(m=>{
+    const monthPeople=(byMonth[m]||[]);if(!monthPeople.length)return'';
+    const stBlocks=stSel.map(stn=>{
+      const grp=monthPeople.filter(o=>o.state===stn).sort((a,b)=>new Date(a.dob).getDate()-new Date(b.dob).getDate());
+      if(!grp.length)return'';
+      return`<div class="stn">${stn}</div>
+      <table><thead><tr><th style="width:48px">Date</th><th style="width:165px">Name</th><th>Designation</th>
+      ${showAge?'<th style="width:42px">Turns</th>':''}${showMob?'<th style="width:78px">Mobile</th>':''}${showRet?'<th style="width:48px">Retd.~</th>':''}${showGift?'<th style="width:62px">Memento</th>':''}</tr></thead>
+      <tbody>${grp.map(o=>{const d=new Date(o.dob);
+        return`<tr><td class="dt">${ord(d)} ${MS[m]}</td><td class="nm">${esc(o.name)}</td><td class="po">${esc((' '+(o.post||'')).split(/\s+/).join(' ').trim().slice(0,95))||'\u2014'}</td>
+        ${showAge?`<td class="ct">${age(o.dob)!==null?(age(o.dob)+1)+'y':'\u2014'}</td>`:''}${showMob?`<td class="ct">${o.mobile||'\u2014'}</td>`:''}${showRet?`<td class="ct">${retYear(o.dob)||'\u2014'}</td>`:''}${showGift?`<td class="ct">${o.giftSent?'\u2713 Sent':'Pending'}</td>`:''}</tr>`;}).join('')}</tbody></table>`;
+    }).join('');
+    return`<div class="msec"><div class="mhdr">${MONTHS[m]} <span class="mcnt">(${monthPeople.length} birthday${monthPeople.length!==1?'s':''})</span></div><div class="gline"></div>${stBlocks}</div>`;
+  }).join('');
+  const rangeLbl=mF===0&&mT===11?'Full Year':MONTHS[mF]+' \u2013 '+MONTHS[mT];
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
+  <style>
+  @page{size:A4;margin:12mm 12mm 24mm 12mm;}
+  body{font-family:'Segoe UI',Helvetica,sans-serif;margin:0;color:#1a1a2e;}
+  @media print{body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}}
+  .h{background:#1a1a2e;color:white;padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:4px solid #c9a84c;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .hl{height:34px;width:auto;}
+  .ht{font-family:Georgia,serif;font-size:14pt;font-weight:700;color:#e8c97e;}
+  .hs{font-size:7.5pt;letter-spacing:1.5px;color:rgba(255,255,255,.55);}
+  .hr{margin-left:auto;text-align:right;}
+  .cf{background:#c0392b;color:white;padding:2px 8px;border-radius:3px;font-size:7.5pt;font-weight:700;display:inline-block;}
+  .hrng{font-size:9pt;color:rgba(255,255,255,.75);margin-bottom:4px;}
+  .bd{padding:12px 16px 6px;}
+  .ttl{font-family:Georgia,serif;font-size:17pt;font-weight:700;text-align:center;margin:6px 0 1px;}
+  .sub{font-size:9pt;color:#888;text-align:center;margin-bottom:10px;}
+  .sumw{display:flex;justify-content:center;margin-bottom:6px;}
+  .sum{border-collapse:collapse;font-size:8.5pt;}
+  .sum th{background:#1a1a2e;color:#e8c97e;padding:5px 22px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .sum td{border:.5pt solid #e8e0d0;padding:4px 22px;}
+  .sum tr:last-child td{background:#fdf6e7;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .cred{font-family:Georgia,serif;font-style:italic;font-weight:700;font-size:9pt;color:#9a7b2e;text-align:center;margin:8px 0 4px;}
+  .msec{margin-top:13px;}
+  .mhdr{font-family:Georgia,serif;font-size:13pt;font-weight:700;color:#16213e;}
+  .mcnt{font-size:9pt;color:#9a7b2e;font-family:'Segoe UI',sans-serif;font-weight:600;}
+  .gline{height:2px;background:#c9a84c;margin:3px 0 6px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .stn{font-size:8.5pt;font-weight:700;letter-spacing:.8px;color:#9a7b2e;margin:7px 0 3px;}
+  table{width:100%;border-collapse:collapse;font-size:8.6pt;page-break-inside:auto;}
+  tr{page-break-inside:avoid;}
+  th{background:#16213e;color:white;padding:4px 7px;text-align:left;font-size:7.4pt;letter-spacing:.4px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  td{padding:4px 7px;border:.5pt solid #e8e0d0;vertical-align:middle;}
+  tr:nth-child(even) td{background:#faf7f0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .dt{font-weight:700;color:#9a7b2e;text-align:center;white-space:nowrap;}
+  .nm{font-weight:700;}
+  .po{font-size:7.7pt;color:#6b6b7b;}
+  .ct{text-align:center;font-size:8pt;}
+  .pfoot{position:fixed;bottom:0;left:0;right:0;background:white;padding:2mm 0 0;}
+  .pfoot .fl1{border-top:.5pt solid #e8e0d0;padding-top:1.5mm;font-family:Georgia,serif;font-style:italic;font-weight:700;font-size:7.8pt;color:#9a7b2e;text-align:center;}
+  .pfoot .fl2{display:flex;justify-content:space-between;font-size:7pt;color:#888;padding:1mm 0 0;}
+  </style></head><body>
+  <div class="pfoot"><div class="fl1">Prepared by: Biswajit Bhattacharjee, Chief Manager (Liaison)</div>
+  <div class="fl2"><span>Generated: ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} \u00b7 Strictly Confidential \u2014 For Internal Use Only</span><span>State Bank of India \u00b7 LHO Guwahati \u00b7 Protocol Cell</span></div></div>
+  <div class="h"><img class="hl" src="${SBI_LOGO}" alt="SBI"><div><div class="ht">NE Dignitaries Connect</div><div class="hs">STATE BANK OF INDIA \u00b7 LHO GUWAHATI \u00b7 PROTOCOL CELL</div></div>
+  <div class="hr"><div class="hrng">${rangeLbl}</div><span class="cf">CONFIDENTIAL</span></div></div>
+  <div class="bd">
+  <div class="ttl">${title}</div><div class="sub">North-East Region \u2014 Month-wise &amp; State-wise</div>
+  <div class="sumw"><table class="sum"><tr><th>Coverage</th><th>Officials</th></tr>
+  ${stSel.map(s=>{const c=pool.filter(o=>o.state===s&&byMonthHas(o)).length;return c?`<tr><td>${s.charAt(0)+s.slice(1).toLowerCase()}</td><td style="text-align:center">${c}</td></tr>`:'';}).join('')}
+  <tr><td>Total</td><td style="text-align:center">${total}</td></tr></table></div>
+  <div class="cred">Conceived &amp; Compiled by <b>Biswajit Bhattacharjee</b>, Chief Manager (Liaison), SBI LHO Guwahati</div>
+  ${sections}
+  </div>
+  <script>window.onload=()=>setTimeout(()=>window.print(),400);<\/script></body></html>`);
+}
 function genBdayRpt(){
   const m=parseInt(document.getElementById('rptMon').value);
   const list=officials.filter(o=>o.dob&&new Date(o.dob).getMonth()===m).sort((a,b)=>new Date(a.dob).getDate()-new Date(b.dob).getDate());
@@ -1480,7 +1596,7 @@ function genBdayRpt(){
   <table><thead><tr><th>#</th><th>Date</th><th>Name</th><th>Designation</th><th>State</th><th>Mobile</th><th>Age</th><th>Memento</th></tr></thead>
   <tbody>${list.map((o,i)=>{const d=new Date(o.dob);return`<tr><td>${i+1}</td><td>${d.getDate()} ${MS[m]}</td><td><strong>${esc(o.name)}</strong></td>
     <td style="font-size:9pt">${esc((o.post||'').slice(0,50))}</td><td>${esc(o.state||'')}</td><td>${o.mobile||'—'}</td>
-    <td>${(age(o.dob)||0)+1}y</td><td>${o.giftSent?'\u2705 Sent':'\u23f3 Pending'}</td></tr>`;}).join('')}</tbody></table>
+    <td>${age(o.dob)!==null?(age(o.dob)+1)+'y':'\u2014'}</td><td>${o.giftSent?'\u2705 Sent':'\u23f3 Pending'}</td></tr>`;}).join('')}</tbody></table>
   <div class="ft"><span>State Bank of India \u00b7 Local Head Office, Guwahati \u00b7 Protocol Cell</span>
   <span>Generated: ${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</span></div></div>
   <script>window.onload=()=>setTimeout(()=>window.print(),300);<\/script></body></html>`);
