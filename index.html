@@ -849,7 +849,7 @@ body.vm .ao-cell{opacity:.25;pointer-events:none;}
     <span style="color:var(--gold);font-size:13px">✦</span>
     Designed & developed by <strong style="color:rgba(255,255,255,.85)">Biswajit Bhattacharjee</strong>
     <span style="color:rgba(255,255,255,.2)">|</span> Chief Manager (Liaison), SBI LHO Guwahati
-    <span style="color:rgba(255,255,255,.2)">|</span> NE Dignitaries Connect v2.0
+    <span style="color:rgba(255,255,255,.2)">|</span> NE Dignitaries Connect v2.1 <span style="color:#c9a84c;font-weight:600">BUILD JUL26-CARD</span>
     
     <span style="color:var(--gold);font-size:13px">✦</span>
   </div>
@@ -874,10 +874,48 @@ let officials=[],filtered=[],currentPage=1,PAGE=50,curTab='dashboard',curProfIdx
 let isAdmin=false,qeFromProf=false,actLog=[],saveTO=null,lastTs=0,fbOK=false,fbTok=null;
 
 // ── INIT ──
+// ── JUNE 2026 TRANSFER MIGRATION (auto-fixes stale cloud/local data) ──
+const NK=n=>(n||'').replace(/\s+/g,' ').trim().toLowerCase();
+const TRANSFER_UPDATES={
+ [NK('Shri Syedain Abbasi, IAS')]:"Special Chief Secretary, Public Health Engineering and Water Resources Departments and Irrigation Department (addl)",
+ [NK('Dr. Om Prakash, IAS')]:"Commissioner & Secretary, Environment & Forest Department and Skill, Employment & Entrepreneurship Departments",
+ [NK('Deba Prasad Misra, IAS')]:"Secretary to the Govt. of Assam, Home & Political Department",
+ [NK('Madhu Sudan Nath, IAS')]:"Secretary to the Govt. of Assam, Agriculture Department",
+ [NK('Shri Megha Nidhi Dahal,IAS')]:"Secretary to the Govt. of Assam, Finance Department and MD, AIDC (addl.)",
+ [NK('Shri Rohan Kumar Jha,IAS')]:"Secretary to the Govt. of Assam, Barak Valley Development Department and Project Director, Assam Resilient Rural Bridge Program (addl.)",
+ [NK('Shri P Vijaya Bhaskar Reddy,IAS')]:"Secretary, Transformation & Development Deptt and CEO, SITA (addl.) and Secretary, Welfare of Minorities & Development Department (addl.)",
+ [NK('Shri Hivare Nisarg Gautam ,IAS')]:"Secretary, Chief Minister's Office & Managing Director, Assam Urban Infrastructure Development & Finance Corporation Ltd. (AUIDFCL)(Addl.) and Secretary to the Govt. of Assam, Finance Department (addl.)",
+ [NK('Shri Aayush Garg,IAS')]:"Managing Director, Samagra Shiksha Axom Mission",
+ [NK('Shri Dibakar Nath,IAS')]:"District Commissioner, Dhubri",
+ [NK('Shri Aditya Vikram Yadav,IAS')]:"Additional Secretary to the Govt. of Assam, Welfare of Minorities Development, Barak Valley Development and Irrigation Departments and Director of Training, Assam Administrative Staff College, Khanapara (addl.)",
+ [NK('Smti Masanda Magdalin Pertin,IAS')]:"Additional Secretary, Chief Minister's Secretariat",
+ [NK('Shri Rahul Kumar Gupta,IAS')]:"District Commissioner, Cachar",
+ [NK('Shri Jay Vikas, IAS')]:"District Commissioner, Hailakandi",
+ [NK('Smti Srishti Singh, IAS')]:"District Commissioner, Morigaon",
+ [NK('Shri Parikshit Thoudam, IAS')]:"District Commissioner, South Salmara Mankachar"
+};
+const NEW_OFFICIALS=[
+ {name:"Shri Sanjoy Dutta, ACS",post:"District Commissioner, Hojai",mobile:"",dob:"",domicile:"",education:"",state:"ASSAM",giftSent:false,giftNote:""},
+ {name:"Shri Ratul Chandra Pathak, ACS",post:"District Commissioner, Majuli",mobile:"",dob:"",domicile:"",education:"",state:"ASSAM",giftSent:false,giftNote:""},
+ {name:"Smti. Anamika Tewari, ACS",post:"Additional Secretary to the Govt. of Assam, Industries, Commerce & Public Enterprises Department",mobile:"",dob:"",domicile:"",education:"",state:"ASSAM",giftSent:false,giftNote:""},
+ {name:"Shri Nabadeep Pathak, ACS",post:"District Commissioner, Barpeta",mobile:"",dob:"",domicile:"",education:"",state:"ASSAM",giftSent:false,giftNote:""},
+ {name:"Shri Pulak Patgiri, ACS",post:"District Commissioner, Udalguri",mobile:"",dob:"",domicile:"",education:"",state:"ASSAM",giftSent:false,giftNote:""},
+ {name:"Smti. Karabi Saikia Karan, ACS",post:"District Commissioner, Biswanath",mobile:"",dob:"",domicile:"",education:"",state:"ASSAM",giftSent:false,giftNote:""},
+ {name:"Shri Lakhinandan Saharia, ACS",post:"District Commissioner, Bongaigaon",mobile:"",dob:"",domicile:"",education:"",state:"ASSAM",giftSent:false,giftNote:""},
+ {name:"Shri Gakul Chandra Brahma, ACS",post:"District Commissioner, Chirang",mobile:"",dob:"",domicile:"",education:"",state:"ASSAM",giftSent:false,giftNote:""}
+];
+function applyTransfers(){
+  let changed=false;
+  officials.forEach(o=>{const np=TRANSFER_UPDATES[NK(o.name)];if(np&&o.post!==np){o.post=np;changed=true;}});
+  NEW_OFFICIALS.forEach(n=>{if(!officials.some(o=>NK(o.name)===NK(n.name))){officials.push(JSON.parse(JSON.stringify(n)));changed=true;}});
+  return changed;
+}
+
 function init(){
   officials=JSON.parse(JSON.stringify(ORIGINAL_DATA));
   const sv=localStorage.getItem('ndc2');
   if(sv){try{const l=JSON.parse(sv);if(l.length>=officials.length)officials=l;}catch(e){}}
+  if(applyTransfers())localStorage.setItem('ndc2',JSON.stringify(officials));
   const av=localStorage.getItem('ndc2_acts');
   if(av){try{actLog=JSON.parse(av);}catch(e){}}
   clock();
@@ -950,7 +988,7 @@ async function fbLoad(){
     const vals=doc.fields?.list?.arrayValue?.values||[];
     if(vals.length>0){
       const rTs=parseInt(doc.fields?.updatedAt?.integerValue||0);
-      if(rTs>=lastTs){officials=vals.map(v=>deserO(v.mapValue?.fields||{}));lastTs=rTs;localStorage.setItem('ndc2',JSON.stringify(officials));renderAll();}
+      if(rTs>=lastTs){officials=vals.map(v=>deserO(v.mapValue?.fields||{}));lastTs=rTs;if(applyTransfers()){localStorage.setItem('ndc2',JSON.stringify(officials));await fbPush();}else{localStorage.setItem('ndc2',JSON.stringify(officials));}renderAll();}
       setSS('s','Synced \u2713');
     }else{await fbPush();}
   }catch(e){setSS('o',e.name==='AbortError'?'Local mode':'Local mode');console.warn('FB:',e.message);}
